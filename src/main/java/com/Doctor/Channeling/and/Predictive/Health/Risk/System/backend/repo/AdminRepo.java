@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AdminRepo extends JpaRepository<Admin, Long> {
 
@@ -19,7 +21,18 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
     """, nativeQuery = true)
     UserProjection findUserByEmail(@Param("email") String email);
 
+    @Query(value = "select * from admin where email = :email and status ='Active'",nativeQuery = true)
+    Admin findAdminByEmail(@Param("email") String email);
 
+    @Query(value = "select count(*) from admin where status ='Active'",nativeQuery = true)
+    long getActiveAdminCount();
 
+    @Query(value="select * from admin where admin_id = :id and status ='Active'",nativeQuery = true)
+    Admin getAdminById(@Param("id") long id);
 
+    @Query(value = "select * from admin where status ='Active'",nativeQuery = true)
+    List<Admin> getAllActiveAdmins();
+
+    @Query(value = "select * from admin where email= :email and status ='Active'",nativeQuery = true)
+    Admin getAdminByEmail(@Param("email") String email);
 }

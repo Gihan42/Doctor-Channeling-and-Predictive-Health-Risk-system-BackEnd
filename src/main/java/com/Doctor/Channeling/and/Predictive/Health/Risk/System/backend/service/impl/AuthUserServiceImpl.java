@@ -2,6 +2,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.
 
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.AuthenticationRequestDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.UserProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.AdminRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.UserRolesRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.AuthUserService;
@@ -9,7 +10,6 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.JWTU
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -63,7 +61,7 @@ public class AuthUserServiceImpl implements AuthUserService {
 
 
         }catch (Exception e){
-            throw new BadCredentialsException("invalid details");
+            throw new CustomBadCredentialsException("invalid details");
         }
     }
 }

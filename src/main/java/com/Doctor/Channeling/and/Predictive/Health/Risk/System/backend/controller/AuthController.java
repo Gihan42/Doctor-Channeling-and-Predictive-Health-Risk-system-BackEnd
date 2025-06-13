@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    //private final AuthUserService authUserService;
-    @Autowired
-    AuthUserService authUserService;
+    private final AuthUserService authUserService;
+
 
     @PostMapping(path = "/login")
     public ResponseEntity<LoginResponse> userLogin(@RequestBody AuthenticationRequestDTO dto){

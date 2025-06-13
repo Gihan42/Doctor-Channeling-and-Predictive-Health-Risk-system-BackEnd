@@ -1,5 +1,6 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.filter;
 
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAuthenticationCredentialsNotFoundException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.JWTUtil;
 import io.jsonwebtoken.Claims;
 import lombok.SneakyThrows;
@@ -68,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     request.setAttribute("message", "Token Exception");
                     request.setAttribute("error", "Token is not valid");
                     SecurityContextHolder.clearContext();
-                    throw new AuthenticationCredentialsNotFoundException("Token is not valid");
+                    throw new CustomAuthenticationCredentialsNotFoundException("Token is not valid");
                 }
             }
         } catch (Exception e) {
