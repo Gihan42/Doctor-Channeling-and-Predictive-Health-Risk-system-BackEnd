@@ -71,11 +71,11 @@ public class Doctor {
 
     @Column(name = "qualification_Id")
      @NonNull
-    private int qualificationId;
+    private long qualificationId;
 
     @Column(name = "specialization_Id")
      @NonNull
-    private int specializationId;
+    private long specializationId;
 
     @Column(name = "status", length = 255)
      @NonNull
