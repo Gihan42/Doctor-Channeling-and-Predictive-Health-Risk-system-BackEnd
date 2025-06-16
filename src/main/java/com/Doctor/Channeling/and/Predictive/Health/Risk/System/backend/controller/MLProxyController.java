@@ -1,5 +1,6 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,9 +15,13 @@ public class MLProxyController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${PYTHON_URL}")
+    private String PYTHON_URL ;
+
+
     @PostMapping("/predict/cancer")
     public ResponseEntity<?> predictCancer(@RequestBody Map<String, Object> payload) {
-        String pythonUrl = "http://localhost:8000/predict/cancer";
+        String pythonUrl = PYTHON_URL+"cancer";
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON); // Force JSON
@@ -32,17 +37,12 @@ public class MLProxyController {
 
     @PostMapping("/predict/heart-attack")
     public ResponseEntity<?> predictHeartAttack(@RequestBody Map<String, Object> payload) {
-        String pythonUrl = "http://localhost:8000/predict/heart-attack";
+        String pythonUrl = PYTHON_URL+"heart-attack";
 
         try {
-            // 1. Create headers and set content type as application/json
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-
-            // 2. Combine payload and headers into one request
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(payload, headers);
-
-            // 3. Make the POST request to the Python API
             ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
 
             return ResponseEntity.ok(response.getBody());
@@ -53,7 +53,7 @@ public class MLProxyController {
 
     @PostMapping("/chat")
     public ResponseEntity<?> sendChatRequest(@RequestBody Map<String, Object> payload) {
-        String pythonUrl = "http://localhost:8000/chat";
+        String pythonUrl = PYTHON_URL+"chat";
 
         try {
             HttpHeaders headers = new HttpHeaders();

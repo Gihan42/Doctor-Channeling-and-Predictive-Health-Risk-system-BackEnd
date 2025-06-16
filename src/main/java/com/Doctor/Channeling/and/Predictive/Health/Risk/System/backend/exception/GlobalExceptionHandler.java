@@ -1,9 +1,6 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception;
 
-import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAdminException;
-import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAuthenticationCredentialsNotFoundException;
-import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
-import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomPatientException;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -34,4 +31,8 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(CustomDoctorException.class)
+    public ResponseEntity<String> handleDoctorException(CustomDoctorException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
