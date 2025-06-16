@@ -20,6 +20,7 @@ public class PatientDTO {
     private int age;
     private String contact;
     private String address;
+    private String city;
     private String status;
     private long roleId;
 }

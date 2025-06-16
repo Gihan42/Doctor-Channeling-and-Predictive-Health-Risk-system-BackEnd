@@ -42,7 +42,7 @@ public class Patient {
     private String gender;
 
     @Column(name = "dateOfBirthDay")
-    @NotNull
+
     private Date dateOfBirthDay;
 
     @Column(name = "age")
@@ -56,6 +56,11 @@ public class Patient {
     @Column(name = "address", length = 255)
     @NotNull
     private String address;
+
+    @Column(name = "city", length = 255)
+    @NotNull
+    private String city;
+
 
     @Column(name = "status", length = 255)
     @NotNull

@@ -30,7 +30,7 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
     @Query(value="select * from admin where admin_id = :id and status ='Active'",nativeQuery = true)
     Admin getAdminById(@Param("id") long id);
 
-    @Query(value = "select * from admin where status ='Active'",nativeQuery = true)
+    @Query(value = "select * from admin where status ='Active' order by  admin_id desc",nativeQuery = true)
     List<Admin> getAllActiveAdmins();
 
     @Query(value = "select * from admin where email= :email and status ='Active'",nativeQuery = true)
