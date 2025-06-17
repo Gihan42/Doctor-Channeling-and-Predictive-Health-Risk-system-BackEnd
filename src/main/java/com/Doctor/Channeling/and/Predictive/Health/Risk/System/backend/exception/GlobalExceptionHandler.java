@@ -35,4 +35,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDoctorException(CustomDoctorException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(CustomQualificationException.class)
+    public ResponseEntity<String> handleQualificationException(CustomQualificationException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CustomSpecializationException.class)
+    public ResponseEntity<String> handleSpecializationException(CustomSpecializationException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface QualificationRepo extends JpaRepository<Qualification,Long> {
 
@@ -15,6 +17,9 @@ public interface QualificationRepo extends JpaRepository<Qualification,Long> {
 
     @Query(value = "select *  from qualification where qualification_name = :qualification and status = 'Active'",nativeQuery = true)
     Qualification findQualificationByName(@Param("qualification") String qualification);
+
+    @Query(value ="select * from qualification where status = 'Active' order by qualification_id desc",nativeQuery = true)
+    List<Qualification>  getAllActiveQualifications();
 
 
 }
