@@ -87,5 +87,5 @@ public class Doctor {
 
     @Column(name = "roleId")
      @NonNull
-    private int roleId;
+    private long roleId;
 }

@@ -45,15 +45,16 @@ public class AuthUserServiceImpl implements AuthUserService {
             LoginResponse loginResponse = new LoginResponse();
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userByEmail.getEmail(), dto.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(userByEmail.getEmail());
+            long userIdByUniqId = userRepo.findUserIdByUniqId(userByEmail.getUserId());
 
 
-
-                String generateToken = jwtUtil.generateToken(userDetails, roleById);
+            String generateToken = jwtUtil.generateToken(userDetails, roleById);
                 loginResponse.setJwt(generateToken);
                 loginResponse.setUserName(userByEmail.getFullName());
                 loginResponse.setUserId(userByEmail.getUserId());
                 loginResponse.setRole(String.valueOf(roleById));
                 loginResponse.setEmail(userByEmail.getEmail());
+                loginResponse.setId(userIdByUniqId);
                 loginResponse.setMessage("Login Success");
                 loginResponse.setCode(200);
                 return loginResponse;

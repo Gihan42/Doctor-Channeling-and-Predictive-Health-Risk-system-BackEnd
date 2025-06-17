@@ -14,5 +14,6 @@ public class LoginResponse {
     private String role;
     private String jwt;
     private String userId;
+    private  long id;
     private String email;
 }

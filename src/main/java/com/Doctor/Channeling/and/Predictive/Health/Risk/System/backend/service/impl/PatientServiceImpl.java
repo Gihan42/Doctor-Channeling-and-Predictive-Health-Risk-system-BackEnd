@@ -8,6 +8,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Pa
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAdminException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomPatientException;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.AdminRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.PatientRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.UserRolesRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.AdminService;
@@ -41,6 +42,7 @@ public class PatientServiceImpl implements PatientService {
     private final UserDetailsService userDetailsService;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final AdminRepo adminRepo;
 
     @Override
     public LoginResponse singUp(SignUpDTO signUpDTO) {
@@ -70,12 +72,15 @@ public class PatientServiceImpl implements PatientService {
                                     savedPatient.getEmail(), signUpDTO.getPassword()));
             UserDetails userDetails = userDetailsService.loadUserByUsername(savedPatient.getEmail());
             String generateToken = jwtUtil.generateToken(userDetails, "Patient");
+            long userIdByUniqId = adminRepo.findUserIdByUniqId(savedPatient.getUniqId());
+
             loginResponse.setMessage("User Created Successfully");
             loginResponse.setJwt(generateToken);
             loginResponse.setUserName(savedPatient.getFullName());
             loginResponse.setUserId(savedPatient.getUniqId());
             loginResponse.setEmail(savedPatient.getEmail());
             loginResponse.setRole("Patient");
+            loginResponse.setId(userIdByUniqId);
             loginResponse.setCode(200);
             return loginResponse;
 

@@ -21,6 +21,18 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
     """, nativeQuery = true)
     UserProjection findUserByEmail(@Param("email") String email);
 
+
+    @Query(value = """
+    SELECT admin_id as id FROM admin WHERE uniq_id = :uniq_id  and status = 'Active'
+    UNION
+    SELECT doctor_id as  id FROM doctor WHERE uniq_id = :uniq_id and status = 'Active'
+    UNION
+    SELECT patient_id as id FROM patient WHERE uniq_id = :uniq_id and status = 'Active'
+    """, nativeQuery = true)
+    long findUserIdByUniqId(@Param("uniq_id") String uniq_id);
+
+
+
     @Query(value = "select * from admin where email = :email and status ='Active'",nativeQuery = true)
     Admin findAdminByEmail(@Param("email") String email);
 

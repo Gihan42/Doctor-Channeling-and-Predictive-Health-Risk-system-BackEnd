@@ -21,8 +21,10 @@ public class DoctorDTO {
     private String medicalRegistrationNo;
     private int yearsOfExperience;
     private String hospitalAffiliation;
-    private int qualificationId;
-    private int specializationId;
+    //private int qualificationId;
+    //private int specializationId;
+    private String qualificationName;
+    private String specialization;
     private String status;
     private double doctorFee;
     private int roleId;
