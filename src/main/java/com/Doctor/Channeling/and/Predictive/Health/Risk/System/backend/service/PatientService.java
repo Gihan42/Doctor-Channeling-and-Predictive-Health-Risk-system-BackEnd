@@ -16,5 +16,7 @@ public interface PatientService {
     Patient deletePatient(long id, String type);
     Patient getPatientByEmail(String email, String type);
     String updateUserPassword(UserPasswordDTO dto, String type);
+    List<String>  getPatientNearByCity(long id, String type);
+
 
 }

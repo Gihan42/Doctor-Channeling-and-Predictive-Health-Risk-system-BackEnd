@@ -42,10 +42,10 @@ public class MedicalCenterController {
         );
     }
 
-    @GetMapping(params = {"districtName"})
-    public ResponseEntity<StandardResponse> getMedicalCenterByCity(@RequestParam String districtName,
+    @GetMapping(params = {"id"})
+    public ResponseEntity<StandardResponse> getMedicalCenterByCity(@RequestParam long id,
                                                                     @RequestAttribute String type) {
-        List<MedicalCentersAndIds> medicalCenterByCity = medicalCenterService.getMedicalCenterByCity(districtName, type);
+        List<MedicalCentersAndIds> medicalCenterByCity = medicalCenterService.getMedicalCenterByCity(id, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", medicalCenterByCity),
                 HttpStatus.OK

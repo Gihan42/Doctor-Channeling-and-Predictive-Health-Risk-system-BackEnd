@@ -15,9 +15,16 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.A
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.PatientService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.JWTUtil;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.LoginResponse;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,9 +32,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +55,9 @@ public class PatientServiceImpl implements PatientService {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final AdminRepo adminRepo;
+    private final RestTemplate restTemplate;
+
+
 
     @Override
     public LoginResponse singUp(SignUpDTO signUpDTO) {
@@ -161,6 +176,59 @@ public class PatientServiceImpl implements PatientService {
             return "password change";
         }
         throw new CustomAdminException("user current password is wrong! ");
+    }
+
+    @Override
+    public List<String>  getPatientNearByCity(long id, String type) {
+        if (!type.equals("Patient")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        Patient byPatientId = patientRepo.findByPatientId(id);
+        if (!Objects.equals(byPatientId, null)) {
+            try{
+                String encodedLocation = URLEncoder.encode(byPatientId.getCity(), StandardCharsets.UTF_8);
+                String url = "https://nominatim.openstreetmap.org/search?q=" + encodedLocation + ",Sri+Lanka&format=json&addressdetails=1";
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("User-Agent", "YourApp/1.0 (contact@example.com)");
+                HttpEntity<String> entity = new HttpEntity<>(headers);
+
+                ResponseEntity<String> response = restTemplate.exchange(
+                        url, HttpMethod.GET, entity, String.class);
+
+                System.out.println("Response: " + response.getBody());
+
+                return parseNominatimResponse(response.getBody());
+
+            }catch (Exception e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            }
+        }
+       throw new CustomPatientException("Patient not found ");
+    }
+    private List<String> parseNominatimResponse(String json) {
+        List<String> cities = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            JsonNode root = mapper.readTree(json);
+            if (root.isArray()) {
+                for (JsonNode node : root) {
+                    JsonNode address = node.path("address");
+                    String city = address.path("city").asText();
+
+                    if (city != null && !city.isEmpty()) {
+                        System.out.println("City: " + city);  // This will print "Colombo"
+                        cities.add(city);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // return only distinct cities, top 3 max
+        return cities.stream().distinct().limit(3).toList();
     }
 
 

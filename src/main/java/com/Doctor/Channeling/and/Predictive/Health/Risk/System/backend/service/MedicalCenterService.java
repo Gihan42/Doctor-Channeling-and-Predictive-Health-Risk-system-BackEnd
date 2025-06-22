@@ -11,7 +11,7 @@ public interface MedicalCenterService {
 
     MedicalCenter createMedicalCenter(MedicalCenterDTO medicalCenterDTO,String type);
     MedicalCenter updateMedicalCenter(MedicalCenterDTO medicalCenterDTO, String type);
-    List<MedicalCentersAndIds> getMedicalCenterByCity(String districtName,String type);
+    List<MedicalCentersAndIds> getMedicalCenterByCity(long patientId,String type);
     List<MedicalCenterWithTypeProjection> getAllActiveMedicalCenters(String type);
     MedicalCenterWithTypeProjection getMedicalCenterByRegistrationId(String registrationNo, String type);
     MedicalCenter deleteMedicalCenter(long id, String type);

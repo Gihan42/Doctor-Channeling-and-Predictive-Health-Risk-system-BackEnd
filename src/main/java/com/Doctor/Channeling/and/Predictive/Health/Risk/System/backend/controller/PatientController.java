@@ -77,4 +77,13 @@ public class PatientController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping(path = "/getPatientNearByCity")
+    public ResponseEntity<StandardResponse> getPatientNearByCity(@RequestParam("id") long id,
+                                                                  @RequestAttribute String type) {
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", patientService.getPatientNearByCity(id, type)),
+                HttpStatus.OK
+        );
+    }
 }

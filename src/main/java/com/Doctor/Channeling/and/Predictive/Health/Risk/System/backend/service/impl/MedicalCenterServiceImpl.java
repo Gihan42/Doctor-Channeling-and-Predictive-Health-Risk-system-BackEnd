@@ -3,22 +3,32 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.ChannelingRoomDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.MedicalCenterDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.MedicalCenter;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Patient;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.ChannelingRoomProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCenterWithTypeProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCentersAndIds;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomMedicalCenterException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.MedicalCenterRepo;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.PatientRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.MedicalCenterService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.MedicalCenterTypeService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 @Transactional
@@ -29,7 +39,8 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
     private final MedicalCenterRepo medicalCenterRepo;
     private  final ModelMapper modelMapper;
     private final MedicalCenterTypeService medicalCenterTypeService;
-
+    private final PatientRepo patientRepo;
+    private final RestTemplate restTemplate;
 
     @Override
     public MedicalCenter createMedicalCenter(MedicalCenterDTO medicalCenterDTO, String type) {
@@ -119,12 +130,62 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
     }
 
     @Override
-    public List<MedicalCentersAndIds> getMedicalCenterByCity(String districtName,String type) {
-        if (!type.equals("Admin")&& !type.equals("Patient")) {
+    public List<MedicalCentersAndIds> getMedicalCenterByCity(long patientId, String type) {
+        if (!type.equals("Admin") && !type.equals("Patient")) {
             throw new CustomBadCredentialsException("Don't have permission");
         }
-        return medicalCenterRepo.getMedicalCenterByDistrict(districtName);
+
+        Patient byPatientId = patientRepo.findByPatientId(patientId);
+
+        if (byPatientId != null) {
+            try {
+                String encodedLocation = URLEncoder.encode(byPatientId.getCity(), StandardCharsets.UTF_8);
+                String url = "https://nominatim.openstreetmap.org/search?q=" + encodedLocation + ",Sri+Lanka&format=json&addressdetails=1";
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("User-Agent", "YourApp/1.0 (contact@example.com)");
+                HttpEntity<String> entity = new HttpEntity<>(headers);
+
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+                String city = parseNominatimResponse(response.getBody());
+
+
+                    String districtName = city;
+                    return medicalCenterRepo.getMedicalCenterByDistrict(districtName);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Collections.emptyList();
+            }
+        }
+
+        throw new CustomMedicalCenterException("No medical center found");
     }
+
+    private String parseNominatimResponse(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            JsonNode root = mapper.readTree(json);
+            if (root.isArray() && root.size() > 0) {
+                JsonNode address = root.get(0).path("address");
+
+                String district = address.path("state_district").asText();
+
+                if (district != null && !district.isEmpty()) {
+                    String cleanedDistrict = district.replace(" District", "").trim();
+                    return cleanedDistrict;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        throw new CustomMedicalCenterException("No valid district found in nominatim response.");
+    }
+
 
     @Override
     public List<MedicalCenterWithTypeProjection> getAllActiveMedicalCenters(String type) {
