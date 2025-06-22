@@ -45,4 +45,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleSpecializationException(CustomSpecializationException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(CustomMedicalCenterException.class)
+    public ResponseEntity<String> handleMedicalCenterException(CustomMedicalCenterException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
