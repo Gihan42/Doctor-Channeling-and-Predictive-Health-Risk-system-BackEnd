@@ -99,4 +99,6 @@ public interface MedicalCenterRepo extends JpaRepository<MedicalCenter, Long> {
             "WHERE mc.status = 'Active'AND mc.registration_number = :registrationNumber AND mct.status = 'Active'", nativeQuery = true)
     MedicalCenterWithTypeProjection getActiveMedicalCentersWithTypeByRegistrationNumber(@Param("registrationNumber") String registrationNumber);
 
+    @Query(value = "select medicle_center_id as Id , center_name as Name from medicle_center where  status = 'Active'",nativeQuery = true)
+    List<MedicalCentersAndIds> getAllActiveMedicalCentersAndIds();
 }

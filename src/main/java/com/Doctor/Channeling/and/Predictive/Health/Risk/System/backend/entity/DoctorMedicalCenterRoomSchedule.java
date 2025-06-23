@@ -37,12 +37,10 @@ public class DoctorMedicalCenterRoomSchedule {
     private String dayOfWeek;
 
     @Column(name = "start_time")
-    @Temporal(TemporalType.TIME)
-    private Date startTime;
+    private String startTime;
 
     @Column(name = "end_time")
-    @Temporal(TemporalType.TIME)
-    private Date endTime;
+    private String endTime;
 
     @Column(name = "status", length = 255)
     @NotNull

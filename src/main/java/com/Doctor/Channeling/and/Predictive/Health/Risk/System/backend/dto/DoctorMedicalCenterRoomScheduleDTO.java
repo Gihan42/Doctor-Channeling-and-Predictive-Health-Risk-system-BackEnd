@@ -15,7 +15,7 @@ public class DoctorMedicalCenterRoomScheduleDTO {
     private long  medicalCenterId;
     private long channelingRoomId;
     private String dayOfWeek;
-    private Date startTime;
-    private Date endTime;
+    private String startTime;
+    private String endTime;
     private String status;
 }

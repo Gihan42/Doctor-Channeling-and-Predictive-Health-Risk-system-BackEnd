@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.controll
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.DoctorDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.MedicalCenterDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.MedicalCenter;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.ChannelingRoomProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCenterWithTypeProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCentersAndIds;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.MedicalCenterService;
@@ -77,6 +78,26 @@ public class MedicalCenterController {
         MedicalCenter deletedMedicalCenter = medicalCenterService.deleteMedicalCenter(id, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "deleted", deletedMedicalCenter),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping(path = "/channelingRooms", params = {"id"})
+    public ResponseEntity<StandardResponse> getAllChannelingRoomsByMedicalCenterId(@RequestParam long id,
+                                                                                   @RequestAttribute String type) {
+        List<ChannelingRoomProjection> allChannelingRoomsByMedicalCenterId =
+                medicalCenterService.getAllChannelingRoomsByMedicalCenterId(id, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", allChannelingRoomsByMedicalCenterId),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping(path = "/getAllMedicalCentersAndIds")
+    public ResponseEntity<StandardResponse> getAllMedicalCentersAndIds(@RequestAttribute String type) {
+        List<MedicalCentersAndIds> allMedicalCentersAndIds = medicalCenterService.getAllMedicalCentersAndIds(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", allMedicalCentersAndIds),
                 HttpStatus.OK
         );
     }

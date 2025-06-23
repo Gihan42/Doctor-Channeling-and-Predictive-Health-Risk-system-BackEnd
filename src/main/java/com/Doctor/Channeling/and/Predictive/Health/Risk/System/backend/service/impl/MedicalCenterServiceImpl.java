@@ -219,4 +219,21 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
         throw new CustomMedicalCenterException("Medical Center not found or already inactive");
     }
 
+    @Override
+    public List<ChannelingRoomProjection> getAllChannelingRoomsByMedicalCenterId(long id, String type) {
+        if (!type.equals("Admin")&& !type.equals("Patient")) {
+            throw new CustomBadCredentialsException("Don't have permission");
+        }
+        return  medicalCenterRepo.getAllChannelingRoomsByMedicalCenterId(id);
+
+    }
+
+    @Override
+    public List<MedicalCentersAndIds> getAllMedicalCentersAndIds(String type) {
+        if (!type.equals("Admin")&& !type.equals("Patient")) {
+            throw new CustomBadCredentialsException("Don't have permission");
+        }
+        return medicalCenterRepo.getAllActiveMedicalCentersAndIds();
+    }
+
 }
