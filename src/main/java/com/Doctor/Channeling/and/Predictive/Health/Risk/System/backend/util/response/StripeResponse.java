@@ -1,5 +1,6 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response;
 
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,5 @@ public class StripeResponse {
     String message;
     String sessionId;
     String sessionUrl;
-    //Payment payment;
+    Payment payment;
 }

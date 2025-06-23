@@ -55,4 +55,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDoctorMedicalCenterRoomSchedule(CustomDoctorMedicalCenterRoomSchedule ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(CustomPaymentException.class)
+    public ResponseEntity<String> handlePaymentException(CustomPaymentException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CustomAppointmentException.class)
+    public ResponseEntity<String> handleAppointmentException(CustomAppointmentException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }
