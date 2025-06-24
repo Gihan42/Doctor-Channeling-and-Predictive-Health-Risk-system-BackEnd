@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "doctor")
@@ -88,4 +89,8 @@ public class Doctor {
     @Column(name = "roleId")
      @NonNull
     private long roleId;
+
+    @Column(name = "patient_count")
+    @NotNull
+    private int patientCount;
 }

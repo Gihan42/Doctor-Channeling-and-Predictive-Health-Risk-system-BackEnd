@@ -44,23 +44,31 @@ public class Appointment {
     @NotNull
     private long sheduleId;  // FK to schedule
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "appointment_date")
     @NotNull
     private Date appointmentDate;
 
+    @Temporal(TemporalType.TIME)
     @Column(name = "appointment_time")
     @NotNull
     private Date appointmentTime;
+
+    @Temporal(TemporalType.TIME)
+    @Column(name = "appointment_eend_time")
+    @NotNull
+    private Date appointmentEndTime;
 
     @Column(name = "channel_number")
     @NotNull
     private int channelNumber;
 
+
     @Column(name = "booking_date")
     @NotNull
     private Date bookingDate;
 
-    @Column(name = "payment_status", length = 255)
+    @Column(name = "appointment_status", length = 255)
     @NotNull
-    private String paymentStatus;
+    private String appointmentStatus;
 }

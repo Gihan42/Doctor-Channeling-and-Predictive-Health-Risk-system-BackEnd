@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.sql.Time;
 import java.util.Date;
 
 @Data
@@ -19,7 +22,8 @@ public class AppointmentDTO {
     private long sheduleId;
     private Date appointmentDate;
     private Date appointmentTime;
+    private Date appointmentEndTime;
     private int channelNumber;
     private Date bookingDate;
-    private String paymentStatus;
+    private String appointmentStatus;
 }

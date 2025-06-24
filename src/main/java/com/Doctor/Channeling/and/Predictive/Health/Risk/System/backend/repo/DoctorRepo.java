@@ -76,6 +76,8 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
         """, nativeQuery = true)
     DoctorProjection findAllActiveDoctorsByEmail(@Param("email") String email);
 
+    @Query(value = "select patient_count from doctor where doctor_id = :id and status = 'Active'", nativeQuery = true)
+    int findPatientCountByDoctorId(@Param("id") long id);
 
 
 }

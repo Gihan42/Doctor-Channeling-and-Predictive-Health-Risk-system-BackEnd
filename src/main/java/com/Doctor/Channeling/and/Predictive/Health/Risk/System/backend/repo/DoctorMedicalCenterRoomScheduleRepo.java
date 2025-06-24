@@ -84,4 +84,8 @@ public interface DoctorMedicalCenterRoomScheduleRepo extends JpaRepository<Docto
     List<DoctorScheduleProjection> getDoctorScheduleWithRoomDetailsByMedicalCenterId(@Param("doctorId") Long doctorId);
 
 
+    @Query(value = "select * from doctor_medical_center_room_schedule where doctor_id =:id and day_of_week=:day and status = 'Active'",nativeQuery = true)
+    DoctorMedicalCenterRoomSchedule findByDoctorIdAndDayOfWeekAndStatusActive(@Param("id") long id, @Param("day") String day);
+
+
 }

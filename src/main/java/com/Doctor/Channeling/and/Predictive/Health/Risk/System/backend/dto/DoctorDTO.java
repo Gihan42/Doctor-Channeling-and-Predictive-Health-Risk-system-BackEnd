@@ -28,4 +28,5 @@ public class DoctorDTO {
     private String status;
     private double doctorFee;
     private int roleId;
+    private int patientCount;
 }
