@@ -55,4 +55,14 @@ public class AppointmentController {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping(params = {"appointmentId"})
+    public ResponseEntity<StandardResponse> deleteAppointment(@RequestParam("appointmentId") long appointmentId,
+                                                               @RequestAttribute String type) {
+        Appointment appointment = appointmentService.deleteAppointment(appointmentId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "Appointment Deleted", appointment),
+                HttpStatus.OK
+        );
+    }
 }

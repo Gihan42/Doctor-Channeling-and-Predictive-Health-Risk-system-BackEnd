@@ -19,15 +19,19 @@ public class Payment {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "appointment_id", nullable = false)
+    @Column(name = "medical_center_id")
     @NotNull
-    private long appointmentId;
+    private long medicalCenterId;
+
+    @Column(name = "doctor_id")
+    @NotNull
+    private long doctorId;
 
     @Column(name = "patient_id", nullable = false)
     @NotNull
     private long patientId;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount")
     @NotNull
     private double amount;
 

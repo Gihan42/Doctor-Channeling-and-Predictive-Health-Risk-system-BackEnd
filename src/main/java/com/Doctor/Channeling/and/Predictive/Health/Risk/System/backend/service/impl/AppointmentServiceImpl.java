@@ -224,6 +224,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepo.findAllAppointmentDetailsByPatientId(patientId);
     }
 
+    @Override
+    public Appointment deleteAppointment(long appointmentId, String type) {
+        if (!type.equals("Patient")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        Appointment appointment = appointmentRepo.findByIdAndStatus(appointmentId);
+        if (!Objects.equals(appointment,null)){
+            appointmentRepo.delete(appointment);
+            return appointment;
+        }
+        throw new CustomAppointmentException("Appointment does not exist");
+    }
+
     private Date parseTimeOnly(String timeStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");

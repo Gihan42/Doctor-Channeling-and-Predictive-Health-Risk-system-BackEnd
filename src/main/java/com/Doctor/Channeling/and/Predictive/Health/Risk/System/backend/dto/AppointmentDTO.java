@@ -26,4 +26,5 @@ public class AppointmentDTO {
     private int channelNumber;
     private Date bookingDate;
     private String appointmentStatus;
+    private long paymentId;
 }

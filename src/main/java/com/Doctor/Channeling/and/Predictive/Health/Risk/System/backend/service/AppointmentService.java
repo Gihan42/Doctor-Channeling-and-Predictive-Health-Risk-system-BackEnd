@@ -13,5 +13,6 @@ public interface AppointmentService {
     Appointment createAppointment(AppointmentDTO appointmentDTO, String type);
     String getOnGoingChannelingNumber(long patientId,String type);
     List<AppointmentProjection> findAllAppointmentDetailsByPatientId( long patientId,String type);
+    Appointment deleteAppointment(long appointmentId, String type);
 
 }

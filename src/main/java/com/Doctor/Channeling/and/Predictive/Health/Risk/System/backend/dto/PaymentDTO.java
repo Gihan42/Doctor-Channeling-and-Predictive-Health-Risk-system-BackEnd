@@ -12,7 +12,8 @@ import java.util.Date;
 public class PaymentDTO {
 
     private Long id;
-    private long appointmentId;
+    private long medicalCenterId;
+    private long doctorId;
     private long patientId;
     private double amount;
     private String paymentMethod;

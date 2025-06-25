@@ -71,4 +71,8 @@ public class Appointment {
     @Column(name = "appointment_status", length = 255)
     @NotNull
     private String appointmentStatus;
+
+    @Column(name = "payment_id")
+    @NotNull
+    private long paymentId;
 }
