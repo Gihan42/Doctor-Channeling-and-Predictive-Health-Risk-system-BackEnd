@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.PatientDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.SpecializationDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Specialization;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCenterSpecializationProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomSpecializationException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.SpecializationRepo;
@@ -82,5 +83,13 @@ public class SpecializationServiceImpl implements SpecializationService {
             return specialization;
         }
         throw new CustomSpecializationException("Specialization not found or already inactive");
+    }
+
+    @Override
+    public List<MedicalCenterSpecializationProjection> findMedicalCentersBySpecialization(String specializationName, String type) {
+        if (!type.equals("Patient")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return specializationRepo.findMedicalCentersBySpecialization(specializationName);
     }
 }

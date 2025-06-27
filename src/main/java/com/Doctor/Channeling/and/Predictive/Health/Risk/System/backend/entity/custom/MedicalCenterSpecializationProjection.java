@@ -1,7 +1,8 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom;
 
-public interface MedicalCentersAndIds {
-    long getId();
+public interface MedicalCenterSpecializationProjection {
+    String getSpecializationName();
+    Long getMedicleCenterId();
     String getCenterName();
     String getContact1();
     String getContact2();

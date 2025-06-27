@@ -30,6 +30,7 @@ public class PatientController {
                 HttpStatus.CREATED
         );
     }
+
     @PutMapping(path = "/update")
     public ResponseEntity<StandardResponse> updatePatient(@RequestBody PatientDTO adminDTO,
                                                           @RequestAttribute String type){

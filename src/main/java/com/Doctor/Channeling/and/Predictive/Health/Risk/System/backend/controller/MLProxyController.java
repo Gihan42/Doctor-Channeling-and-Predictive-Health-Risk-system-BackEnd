@@ -1,5 +1,6 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -37,17 +38,22 @@ public class MLProxyController {
 
     @PostMapping("/predict/heart-attack")
     public ResponseEntity<?> predictHeartAttack(@RequestBody Map<String, Object> payload) {
-        String pythonUrl = PYTHON_URL+"heart-attack";
+        String pythonUrl = PYTHON_URL + "heart-attack";
 
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(payload, headers);
+
             ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
 
-            return ResponseEntity.ok(response.getBody());
+            // Convert response body string to JSON map
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> jsonResponse = objectMapper.readValue(response.getBody(), Map.class);
+
+            return ResponseEntity.ok(jsonResponse); // return proper JSON
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -61,7 +67,6 @@ public class MLProxyController {
 
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(payload, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(pythonUrl, requestEntity, String.class);
-
             return ResponseEntity.ok(response.getBody());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());

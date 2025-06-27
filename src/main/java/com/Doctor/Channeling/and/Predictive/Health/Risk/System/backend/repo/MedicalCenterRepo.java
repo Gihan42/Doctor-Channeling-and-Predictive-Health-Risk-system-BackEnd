@@ -60,8 +60,28 @@ public interface MedicalCenterRepo extends JpaRepository<MedicalCenter, Long> {
 """, nativeQuery = true)
     List<ChannelingRoomProjection> getAllChannelingRoomsByMedicalCenterId(@Param("id") long id);
 
-    @Query(value = "select medicle_center_id as Id , center_name as Name from medicle_center where distric= :district and status = 'Active'",nativeQuery = true)
+/*    @Query(value = "select medicle_center_id as Id , center_name as Name from medicle_center where distric= :district and status = 'Active'",nativeQuery = true)
+    List<MedicalCentersAndIds> getMedicalCenterByDistrict(@Param("district") String district);*/
+
+    @Query(value = """
+        SELECT
+            medicle_center_id AS Id,
+            center_name AS centerName,
+            contact1 AS contact1,
+            contact2 AS contact2,
+            email AS email,
+            address AS address,
+            distric AS distric,
+            open_time AS openTime,
+            close_time AS closeTime,
+            channeling_fee AS channelingFee,
+            center_type_id AS centerType
+        FROM medicle_center
+        WHERE distric = :district
+          AND status = 'Active'
+""", nativeQuery = true)
     List<MedicalCentersAndIds> getMedicalCenterByDistrict(@Param("district") String district);
+
 
     @Query(value = "SELECT " +
             "mc.medicle_center_id AS id, " +

@@ -41,8 +41,8 @@ public class Patient {
     @NotNull
     private String gender;
 
+    @Temporal(TemporalType.DATE)
     @Column(name = "dateOfBirthDay")
-
     private Date dateOfBirthDay;
 
     @Column(name = "age")

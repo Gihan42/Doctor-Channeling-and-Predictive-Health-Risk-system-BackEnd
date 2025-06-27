@@ -73,7 +73,7 @@ public class PatientServiceImpl implements PatientService {
                     "Empty",
                     null,
                     0,
-                    "Empty",
+                    signUpDTO.getPhoneNumber(),
                     "Empty",
                     "Empty",
                     "Active",
