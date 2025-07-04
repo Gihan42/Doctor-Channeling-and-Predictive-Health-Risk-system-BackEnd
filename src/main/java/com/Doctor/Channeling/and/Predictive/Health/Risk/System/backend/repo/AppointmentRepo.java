@@ -2,6 +2,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo;
 
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Appointment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Payment;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -105,7 +106,25 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Long> {
 """, nativeQuery = true)
     List<AppointmentProjection> findAllAppointmentDetailsByPatientId(@Param("patientId") long patientId);
 
-
+    @Query(value = """
+        SELECT 
+            d.full_name AS doctorName,
+            a.channel_number AS channelingNumber,
+            a.room_id AS channelingRoomId,
+            a.appointment_date AS appointmentDate,
+            a.appointment_time AS appointmentTime,
+            mc.center_name AS medicalCenterName,
+            a.appointment_status AS appointmentStatus
+        FROM 
+            appointment a
+        JOIN 
+            doctor d ON a.doctor_id = d.doctor_id
+        JOIN 
+            medicle_center mc ON a.medicle_center_id = mc.medicle_center_id
+        WHERE 
+            a.patient_id = :patientId
+        """, nativeQuery = true)
+    List<AppointmentDetailsForDashBoardProjection> findAppointmentDetailsByPatientId(@Param("patientId") Long patientId);
 
 
 }

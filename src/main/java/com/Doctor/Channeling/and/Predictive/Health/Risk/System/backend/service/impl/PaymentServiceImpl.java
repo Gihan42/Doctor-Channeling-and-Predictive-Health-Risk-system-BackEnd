@@ -128,7 +128,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPatientId(paymentDto.getPatientId());
         payment.setAmount(totalAmount);
         payment.setPaymentMethod(paymentDto.getPaymentMethod());
-        payment.setPaymentStatus("Pendings"); // Set status as PENDING initially
+        payment.setPaymentStatus("Pending"); // Set status as PENDING initially
         payment.setPaymentDate(LocalDate.now());
         payment.setPaymentTime(LocalDateTime.now());
 

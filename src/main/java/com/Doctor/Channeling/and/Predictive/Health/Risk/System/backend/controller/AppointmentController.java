@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.controll
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.AppointmentDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.DoctorDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Appointment;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.AppointmentService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.StandardResponse;
@@ -62,6 +63,18 @@ public class AppointmentController {
         Appointment appointment = appointmentService.deleteAppointment(appointmentId, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "Appointment Deleted", appointment),
+                HttpStatus.OK
+        );
+    }
+    @GetMapping(path = "/getAppointmentDetailsByPatientId", params = {"patientId"})
+    public ResponseEntity<StandardResponse> findAppointmentDetailsByPatientId(
+            @RequestParam("patientId") long patientId,
+            @RequestAttribute String type) {
+
+        List<AppointmentDetailsForDashBoardProjection> appointmentDetailsByPatientId =
+                appointmentService.findAppointmentDetailsByPatientId(patientId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", appointmentDetailsByPatientId),
                 HttpStatus.OK
         );
     }

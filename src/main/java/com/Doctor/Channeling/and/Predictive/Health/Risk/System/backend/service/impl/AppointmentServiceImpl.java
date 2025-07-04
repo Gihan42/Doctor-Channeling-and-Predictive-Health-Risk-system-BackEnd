@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.AppointmentDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Appointment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.DoctorMedicalCenterRoomSchedule;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAppointmentException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
@@ -298,6 +299,14 @@ public class AppointmentServiceImpl implements AppointmentService {
             return appointment;
         }
         throw new CustomAppointmentException("Appointment does not exist");
+    }
+
+    @Override
+    public List<AppointmentDetailsForDashBoardProjection> findAppointmentDetailsByPatientId(long patientId, String type) {
+        if (!type.equals("Patient")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return appointmentRepo.findAppointmentDetailsByPatientId(patientId);
     }
 
     private Date parseTimeOnly(String timeStr) {
