@@ -150,4 +150,12 @@ public class DoctorServiceImpl implements DoctorService {
         throw new CustomDoctorException("Doctor not found or already inactive");
 
     }
+
+    @Override
+    public List<Doctor> findDoctorsByMedicalCenterId(long medicalCenterId,long specializationId,String type) {
+        if (!type.equals("Patient") && !type.equals("Admin")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return doctorRepo.findDoctorsByMedicalCenterId(medicalCenterId, specializationId);
+    }
 }

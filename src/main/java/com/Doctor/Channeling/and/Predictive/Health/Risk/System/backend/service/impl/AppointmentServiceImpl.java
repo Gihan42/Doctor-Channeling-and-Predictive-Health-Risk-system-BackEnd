@@ -38,7 +38,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
 
-    @Scheduled(cron = "* * * * * ?")
+    @Scheduled(cron = "* * * * * *")
     public void assignTimeToPendingAppointments() {
         List<Appointment> appointments = appointmentRepo.findByAppointmentDateAndStatus(getTodayDateOnly());
 
@@ -144,7 +144,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
 
-    @Override
+/*    @Override
     public Appointment createAppointment(AppointmentDTO appointmentDTO, String type) {
         if (!type.equals("Patient")) {
             throw new CustomBadCredentialsException("dont have permission");
@@ -152,6 +152,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         Appointment existingAppointment = appointmentRepo.findByIdAndStatus(appointmentDTO.getId());
         int patientCountByDoctorId = doctorRepo.findPatientCountByDoctorId(appointmentDTO.getDoctorId());
+        DoctorMedicalCenterRoomSchedule byDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive =
+                doctorMedicalCenterRoomScheduleRepo.
+                        findByDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive(
+                                appointmentDTO.getDoctorId(),
+                                appointmentDTO.getMedicleCenterId(),
+                                appointmentDTO.getDayOfWeek()
+                        );
 
         if (existingAppointment == null) {
             int currentAppointmentCount = appointmentRepo.countByDoctorIdAndSheduleIdAndAppointmentDate(
@@ -188,6 +195,8 @@ public class AppointmentServiceImpl implements AppointmentService {
                 appointment.setChannelNumber(generatedChannelNumber);
                 appointment.setAppointmentTime(new Time(appointmentTime.getTime()));
                 appointment.setAppointmentEndTime(new Time(appointmentEndTime.getTime()));
+                appointment.setSheduleId(byDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive.getId());
+                appointment.setRoomId(byDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive.getChannelingRoomId());
 
                 return appointmentRepo.save(appointment);
             } else {
@@ -196,7 +205,61 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         throw new CustomAppointmentException("Appointment already exists with this ID or status is not pending");
+    }*/
+
+
+    @Override
+    public Appointment createAppointment(AppointmentDTO appointmentDTO, String type) {
+        if (!type.equals("Patient")) {
+            throw new CustomBadCredentialsException("You don't have permission to perform this action.");
+        }
+
+        // Find the doctor's schedule for the requested day
+        DoctorMedicalCenterRoomSchedule schedule = doctorMedicalCenterRoomScheduleRepo
+                .findByDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive(
+                        appointmentDTO.getDoctorId(),
+                        appointmentDTO.getMedicleCenterId(),
+                        getDayNameFromDate(appointmentDTO.getAppointmentDate())
+                );
+
+        if (schedule == null) {
+            throw new CustomAppointmentException("The doctor does not have a schedule for the selected day.");
+        }
+
+        // Get the total number of patients the doctor can see in this session
+        int patientCountByDoctorId = doctorRepo.findPatientCountByDoctorId(appointmentDTO.getDoctorId());
+
+        // Get the number of appointments already booked for this schedule on this date
+        int currentAppointmentCount = appointmentRepo.countByDoctorIdAndSheduleIdAndAppointmentDate(
+                appointmentDTO.getDoctorId(),
+                schedule.getId(),
+                appointmentDTO.getAppointmentDate()
+        );
+
+        // Check if the doctor's schedule is full
+        if (currentAppointmentCount >= patientCountByDoctorId) {
+            throw new CustomAppointmentException("The doctor's schedule is full for this day. Please choose another date.");
+        }
+
+        // Calculate the duration of each appointment slot
+        long totalDurationMillis = parseTimeOnly(schedule.getEndTime()).getTime() - parseTimeOnly(schedule.getStartTime()).getTime();
+        long slotDurationMillis = totalDurationMillis / patientCountByDoctorId;
+
+        // Determine the start time of the new appointment
+        long newAppointmentStartTimeMillis = parseTimeOnly(schedule.getStartTime()).getTime() + (currentAppointmentCount * slotDurationMillis);
+        long newAppointmentEndTimeMillis = newAppointmentStartTimeMillis + slotDurationMillis;
+
+        // Create and save the new appointment
+        Appointment appointment = modelMapper.map(appointmentDTO, Appointment.class);
+        appointment.setAppointmentStatus("Pending");
+        appointment.setChannelNumber(currentAppointmentCount + 1);
+        appointment.setAppointmentTime(new Time(newAppointmentStartTimeMillis));
+        appointment.setAppointmentEndTime(new Time(newAppointmentEndTimeMillis));
+        appointment.setSheduleId(schedule.getId());
+        appointment.setRoomId(schedule.getChannelingRoomId());
+        return appointmentRepo.save(appointment);
     }
+
 
     @Override
     public String getOnGoingChannelingNumber(long patientId, String type) {

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,53 +49,69 @@ public class PaymentServiceImpl implements PaymentService {
             throw new CustomBadCredentialsException("dont have permission");
         }
 
-        Doctor byIdAndStatus = doctorRepo.findByIdAndStatus(paymentDto.getDoctorId());
-        MedicalCenter medicalCenterById =
-                medicalCenterRepo.findMedicalCenterById(paymentDto.getMedicalCenterId());
+        try {
+            Doctor byIdAndStatus = doctorRepo.findByIdAndStatus(paymentDto.getDoctorId());
+            MedicalCenter medicalCenterById = medicalCenterRepo.findMedicalCenterById(paymentDto.getMedicalCenterId());
 
-        double totalAmount = byIdAndStatus.getDoctorFee() + medicalCenterById.getChannelingFee();
-        System.out.println("Total Amount: " + totalAmount);
+            if (byIdAndStatus == null) {
+                throw new RuntimeException("Doctor not found with ID: " + paymentDto.getDoctorId());
+            }
+            if (medicalCenterById == null) {
+                throw new RuntimeException("Medical center not found with ID: " + paymentDto.getMedicalCenterId());
+            }
 
+            double totalAmount = byIdAndStatus.getDoctorFee() + medicalCenterById.getChannelingFee();
+            System.out.println("Total Amount: " + totalAmount);
 
-        Stripe.apiKey = secretkey;
-        try{
+            Stripe.apiKey = secretkey;
+
+            // Create Stripe session
             SessionCreateParams.LineItem.PriceData.ProductData productData =
                     SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                            .setName(String.valueOf(paymentDto.getPatientId()))
+                            .setName("Medical Appointment - Patient ID: " + paymentDto.getPatientId())
+                            .setDescription("Doctor: " + byIdAndStatus.getFullName() + " at " + medicalCenterById.getCenterName())
                             .build();
 
             SessionCreateParams.LineItem.PriceData priceData =
                     SessionCreateParams.LineItem.PriceData.builder()
                             .setCurrency("lkr")
-                            .setUnitAmount ((long) (totalAmount * 100))
+                            .setUnitAmount((long) (totalAmount * 100))
                             .setProductData(productData)
                             .build();
-            // Build Line Item
+
             SessionCreateParams.LineItem lineItem =
                     SessionCreateParams.LineItem.builder()
                             .setQuantity(1L)
                             .setPriceData(priceData)
                             .build();
 
-            // Build Session Parameters
             SessionCreateParams params =
                     SessionCreateParams.builder()
                             .setMode(SessionCreateParams.Mode.PAYMENT)
-                            .setSuccessUrl("http://localhost:3000/success")
-                            .setCancelUrl("http://localhost:3000/cancel")
+                            .setSuccessUrl("http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}")
+                            .setCancelUrl("http://localhost:5173/cancel")
                             .addAllLineItem(Collections.singletonList(lineItem))
+                            .putMetadata("patientId", String.valueOf(paymentDto.getPatientId()))
+                            .putMetadata("doctorId", String.valueOf(paymentDto.getDoctorId()))
+                            .putMetadata("medicalCenterId", String.valueOf(paymentDto.getMedicalCenterId()))
                             .build();
 
             Session session = Session.create(params);
+
+            // Save payment record with proper status
+            Payment savedPayment = savePaymentWithStatus(paymentDto, totalAmount, session.getId());
+
             return new StripeResponse(
                     "SUCCESS",
                     "Payment session created successfully.",
                     session.getId(),
                     session.getUrl(),
-                    savePayment(paymentDto)
+                    savedPayment
             );
 
-        }catch (Exception e){
+        } catch (Exception e) {
+            System.err.println("Error creating payment session: " + e.getMessage());
+            e.printStackTrace();
             return new StripeResponse(
                     "ERROR",
                     "Failed to create payment session: " + e.getMessage(),
@@ -103,6 +121,23 @@ public class PaymentServiceImpl implements PaymentService {
             );
         }
     }
+    private Payment savePaymentWithStatus(PaymentDTO paymentDto, double totalAmount, String sessionId) {
+        Payment payment = new Payment();
+        payment.setMedicalCenterId(paymentDto.getMedicalCenterId());
+        payment.setDoctorId(paymentDto.getDoctorId());
+        payment.setPatientId(paymentDto.getPatientId());
+        payment.setAmount(totalAmount);
+        payment.setPaymentMethod(paymentDto.getPaymentMethod());
+        payment.setPaymentStatus("Pendings"); // Set status as PENDING initially
+        payment.setPaymentDate(LocalDate.now());
+        payment.setPaymentTime(LocalDateTime.now());
+
+        // If you have a sessionId field in Payment entity, set it
+        // payment.setSessionId(sessionId);
+
+        return paymentRepo.save(payment);
+    }
+
 
     @Override
     public List<AppointmentDetailsProjection> getAppointmentsWithDetailsByPatientId(long patientId, String type) {
@@ -114,12 +149,18 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Payment savePayment(PaymentDTO paymentDto) {
         Doctor byIdAndStatus = doctorRepo.findByIdAndStatus(paymentDto.getDoctorId());
-        MedicalCenter medicalCenterById =
-                medicalCenterRepo.findMedicalCenterById(paymentDto.getMedicalCenterId());
+        MedicalCenter medicalCenterById = medicalCenterRepo.findMedicalCenterById(paymentDto.getMedicalCenterId());
 
         double totalAmount = byIdAndStatus.getDoctorFee() + medicalCenterById.getChannelingFee();
+
         Payment payment = modelMapper.map(paymentDto, Payment.class);
         payment.setAmount(totalAmount);
+
+        // Set required fields that are missing
+        payment.setPaymentStatus("PENDING"); // Set initial status as PENDING
+        payment.setPaymentDate(LocalDate.now()); // Set current date
+        payment.setPaymentTime(LocalDateTime.now()); // Set current timestamp
+
         return paymentRepo.save(payment);
     }
 }

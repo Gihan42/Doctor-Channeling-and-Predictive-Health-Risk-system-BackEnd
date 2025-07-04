@@ -27,4 +27,5 @@ public class AppointmentDTO {
     private Date bookingDate;
     private String appointmentStatus;
     private long paymentId;
+    private String dayOfWeek;
 }

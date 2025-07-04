@@ -88,4 +88,14 @@ public interface DoctorMedicalCenterRoomScheduleRepo extends JpaRepository<Docto
     DoctorMedicalCenterRoomSchedule findByDoctorIdAndDayOfWeekAndStatusActive(@Param("id") long id, @Param("day") String day);
 
 
+    @Query(value = "select day_of_week from doctor_medical_center_room_schedule where doctor_id = :doctorId and medical_center_id= :medcleCenterId and status = 'Active'",nativeQuery = true)
+    List<String> findDayOfWeekByDoctorIdAndMedicalCenterId(@Param("doctorId") Long doctorId, @Param("medcleCenterId") Long medcleCenterId);
+
+    @Query(value = "select start_time from doctor_medical_center_room_schedule where doctor_id=:doctorId and status = 'Active'",nativeQuery = true)
+    List<String> findStartTimeByDoctorId(@Param("doctorId") Long doctorId);
+
+    @Query(value = "select * from doctor_medical_center_room_schedule where doctor_id=:doctorId and medical_center_id = :medicalCenterId and day_of_week=:dayOfWeek ",nativeQuery = true)
+    DoctorMedicalCenterRoomSchedule findByDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive(@Param("doctorId") Long doctorId, @Param("medicalCenterId") Long medicalCenterId, @Param("dayOfWeek") String dayOfWeek);
+
+
 }

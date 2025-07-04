@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -45,9 +47,9 @@ public class Payment {
 
     @Column(name = "payment_date")
     @NotNull
-    private Date paymentDate;
+    private LocalDate paymentDate;
 
     @Column(name = "payment_time")
     @NotNull
-    private Date paymentTime;
+    private LocalDateTime paymentTime;
 }

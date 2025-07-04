@@ -81,4 +81,14 @@ public class DoctorController {
         );
     }
 
+    @GetMapping(params = {"medicleCenterId","specializationId"})
+    public ResponseEntity<StandardResponse> getDoctorsByMedicalCenterId(@RequestParam("medicleCenterId") long medicleCenterId,
+                                                                         @RequestParam("specializationId") long specializationId,
+                                                                         @RequestAttribute String type) {
+        List<Doctor> doctorsByMedicalCenterId = doctorService.findDoctorsByMedicalCenterId(medicleCenterId, specializationId,type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", doctorsByMedicalCenterId),
+                HttpStatus.OK
+        );
+    }
 }

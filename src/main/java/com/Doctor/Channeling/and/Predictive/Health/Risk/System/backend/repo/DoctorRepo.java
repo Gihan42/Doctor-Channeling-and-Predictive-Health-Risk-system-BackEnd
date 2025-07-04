@@ -79,5 +79,18 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
     @Query(value = "select patient_count from doctor where doctor_id = :id and status = 'Active'", nativeQuery = true)
     int findPatientCountByDoctorId(@Param("id") long id);
 
+/*    @Query(value = "SELECT DISTINCT d.* FROM doctor d " +
+            "JOIN doctor_medical_center_room_schedule dmcrs ON d.doctor_id = dmcrs.doctor_id " +
+            "WHERE dmcrs.medical_center_id = :medicalCenterId " +
+            "AND d.status = 'Active' AND dmcrs.status = 'Active'", nativeQuery = true)*/
+
+    @Query(value = "SELECT DISTINCT d.* FROM doctor d JOIN doctor_medical_center_room_schedule dmcrs\n" +
+            "    ON d.doctor_id = dmcrs.doctor_id\n" +
+            "                    WHERE dmcrs.medical_center_id = :medicalCenterId\n" +
+            "                      AND d.specialization_id = :specializationId\n" +
+            "                      AND d.status = 'Active' AND dmcrs.status = 'Active'",nativeQuery = true)
+    List<Doctor> findDoctorsByMedicalCenterId(@Param("medicalCenterId") Long medicalCenterId,@Param("specializationId") Long specializationId);
+
+
 
 }

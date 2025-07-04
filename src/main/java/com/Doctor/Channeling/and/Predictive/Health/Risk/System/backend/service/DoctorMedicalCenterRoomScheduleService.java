@@ -14,5 +14,7 @@ public interface DoctorMedicalCenterRoomScheduleService {
     List<DoctorScheduleProjection> getDoctorScheduleWithRoomDetails(long doctorId,String type);
     List<DoctorScheduleProjection> getDoctorScheduleWithRoomDetailsByMedicalCenterId(long medicalCenterId,String type);
     DoctorMedicalCenterRoomSchedule deleteDoctorScheduleWithRoomDetails(long id, String type);
+    List<String> findDayOfWeekByDoctorIdAndMedicalCenterId(long doctorId, long medcleCenterId,String type);
+    List<String> findStartTimeByDoctorId(long doctorId,String type);
 
 }

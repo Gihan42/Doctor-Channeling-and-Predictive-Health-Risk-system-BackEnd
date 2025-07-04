@@ -73,4 +73,26 @@ public class DoctorMedicalCenterRoomScheduleController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping(params = {"doctorId","medcleCenterId"})
+    public ResponseEntity<StandardResponse> findDayOfWeekByDoctorIdAndMedicalCenterId(@RequestParam("doctorId") long doctorId,
+                                                                                @RequestParam("medcleCenterId") long medcleCenterId,
+                                                                                @RequestAttribute String type) {
+        List<String> dayOfWeekByDoctorIdAndMedicalCenterId =
+                doctorMedicalCenterRoomScheduleService.findDayOfWeekByDoctorIdAndMedicalCenterId(doctorId, medcleCenterId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", dayOfWeekByDoctorIdAndMedicalCenterId),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping(params = {"doctorId"})
+    public ResponseEntity<StandardResponse> findStartTimeByDoctorId(@RequestParam("doctorId") long doctorId,
+                                                                     @RequestAttribute String type) {
+        List<String> startTimeByDoctorId = doctorMedicalCenterRoomScheduleService.findStartTimeByDoctorId(doctorId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", startTimeByDoctorId),
+                HttpStatus.OK
+        );
+    }
 }

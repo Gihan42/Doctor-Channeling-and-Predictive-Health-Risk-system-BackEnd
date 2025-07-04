@@ -96,4 +96,20 @@ public class DoctorMedicalCenterRoomScheduleServiceImpl implements DoctorMedical
         throw new CustomDoctorMedicalCenterRoomSchedule("Doctor Medical Center Room Schedule already exists for this doctor");
 
     }
+
+    @Override
+    public List<String> findDayOfWeekByDoctorIdAndMedicalCenterId(long doctorId, long medcleCenterId, String type) {
+        if (!type.equals("Patient")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return doctorMedicalCenterRoomScheduleRepo.findDayOfWeekByDoctorIdAndMedicalCenterId(doctorId, medcleCenterId);
+    }
+
+    @Override
+    public List<String> findStartTimeByDoctorId(long doctorId, String type) {
+        if (!type.equals("Patient") ){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return doctorMedicalCenterRoomScheduleRepo.findStartTimeByDoctorId(doctorId);
+    }
 }
