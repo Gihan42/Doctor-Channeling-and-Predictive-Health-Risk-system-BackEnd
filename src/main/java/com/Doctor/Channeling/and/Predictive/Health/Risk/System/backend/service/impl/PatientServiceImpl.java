@@ -75,7 +75,7 @@ public class PatientServiceImpl implements PatientService {
                     0,
                     signUpDTO.getPhoneNumber(),
                     "Empty",
-                    "Empty",
+                    signUpDTO.getCity(),
                     "Active",
                     roleIdByRole
             );
