@@ -28,6 +28,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -72,19 +74,39 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
                     room.setId(newId);
                 }
             }
-            MedicalCenter map = modelMapper.map(medicalCenterDTO, MedicalCenter.class);
-            long centerTypeId = medicalCenterTypeService.addMedicalCenterType(medicalCenterDTO.getMedicalCenterType());
-            map.setCenterTypeId(centerTypeId);
-            map.setStatus("Active");
-            map.setChannelingRooms(medicalCenterDTO.getChannelingRooms());
-            return medicalCenterRepo.save(map);
+            try {
+                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                Date fullDate = timeFormat.parse(medicalCenterDTO.getOpenTime());
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(fullDate);
+                calendar.set(1970, Calendar.JANUARY, 1);
+                Date openTime = calendar.getTime();
+
+                Date fullDateTwo = timeFormat.parse(medicalCenterDTO.getCloseTime());
+                Calendar calendarTwo = Calendar.getInstance();
+                calendarTwo.setTime(fullDateTwo);
+                calendarTwo.set(1970, Calendar.JANUARY, 1);
+                Date closeTime = calendarTwo.getTime();
+
+                MedicalCenter map = modelMapper.map(medicalCenterDTO, MedicalCenter.class);
+                long centerTypeId = medicalCenterTypeService.addMedicalCenterType(medicalCenterDTO.getMedicalCenterType());
+                map.setCenterTypeId(centerTypeId);
+                map.setStatus("Active");
+                map.setOpenTime(openTime);
+                map.setCloseTime(closeTime);
+                map.setChannelingRooms(medicalCenterDTO.getChannelingRooms());
+                return medicalCenterRepo.save(map);
+
+            } catch (ParseException e) {
+                throw new RuntimeException("Time format is invalid. Expected format: HH:mm:ss", e);
+            }
         }
 
         throw new CustomMedicalCenterException("Medical Center already exists");
     }
 
     @Override
-    public MedicalCenter updateMedicalCenter(MedicalCenterDTO medicalCenterDTO, String type) {
+    public MedicalCenter updateMedicalCenter(MedicalCenterDTO medicalCenterDTO, String type)  {
         if (!type.equals("Admin")) {
             throw new CustomBadCredentialsException("Don't have permission");
         }
@@ -92,41 +114,57 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
         if (Objects.equals(existingCenter,null)) {
             throw new CustomMedicalCenterException("Medical Center already exists");
         }
-        existingCenter.setCenterName(medicalCenterDTO.getCenterName());
-        existingCenter.setRegistrationNumber(existingCenter.getRegistrationNumber());
-        existingCenter.setContact1(medicalCenterDTO.getContact1());
-        existingCenter.setContact2(medicalCenterDTO.getContact2());
-        existingCenter.setEmail(medicalCenterDTO.getEmail());
-        existingCenter.setAddress(medicalCenterDTO.getAddress());
-        existingCenter.setDistric(medicalCenterDTO.getDistric());
-        existingCenter.setOpenTime(medicalCenterDTO.getOpenTime());
-        existingCenter.setCloseTime(medicalCenterDTO.getCloseTime());
-        existingCenter.setChannelingFee(medicalCenterDTO.getChannelingFee());
+        try {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date fullDate = timeFormat.parse(medicalCenterDTO.getOpenTime());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(fullDate);
+            calendar.set(1970, Calendar.JANUARY, 1);
+            Date openTime = calendar.getTime();
 
-        long centerTypeId = medicalCenterTypeService.addMedicalCenterType(medicalCenterDTO.getMedicalCenterType());
-        existingCenter.setCenterTypeId(centerTypeId);
+            Date fullDateTwo = timeFormat.parse(medicalCenterDTO.getCloseTime());
+            Calendar calendarTwo = Calendar.getInstance();
+            calendarTwo.setTime(fullDateTwo);
+            calendarTwo.set(1970, Calendar.JANUARY, 1);
+            Date closeTime = calendarTwo.getTime();
 
-        existingCenter.setStatus(medicalCenterDTO.getStatus());
+            existingCenter.setCenterName(medicalCenterDTO.getCenterName());
+            existingCenter.setRegistrationNumber(existingCenter.getRegistrationNumber());
+            existingCenter.setContact1(medicalCenterDTO.getContact1());
+            existingCenter.setContact2(medicalCenterDTO.getContact2());
+            existingCenter.setEmail(medicalCenterDTO.getEmail());
+            existingCenter.setAddress(medicalCenterDTO.getAddress());
+            existingCenter.setDistric(medicalCenterDTO.getDistric());
+            existingCenter.setOpenTime(openTime);
+            existingCenter.setCloseTime(closeTime);
+            existingCenter.setChannelingFee(medicalCenterDTO.getChannelingFee());
 
-        List<ChannelingRoomDTO> incomingRooms = medicalCenterDTO.getChannelingRooms();
-        if (incomingRooms != null) {
-            for (ChannelingRoomDTO room : incomingRooms) {
-                if (room.getId() == null || room.getId() == 0) {
-                    long newId;
-                    boolean exists;
-                    Random random = new Random();
-                    do {
-                        newId = 10000 + random.nextInt(90000);
-                        ChannelingRoomProjection existingRoom = medicalCenterRepo.getMedicalCenterByChannelingRoom(newId);
-                        exists = existingRoom != null;
-                    } while (exists);
-                    room.setId(newId);
+            long centerTypeId = medicalCenterTypeService.addMedicalCenterType(medicalCenterDTO.getMedicalCenterType());
+            existingCenter.setCenterTypeId(centerTypeId);
+
+            existingCenter.setStatus(medicalCenterDTO.getStatus());
+
+            List<ChannelingRoomDTO> incomingRooms = medicalCenterDTO.getChannelingRooms();
+            if (incomingRooms != null) {
+                for (ChannelingRoomDTO room : incomingRooms) {
+                    if (room.getId() == null || room.getId() == 0) {
+                        long newId;
+                        boolean exists;
+                        Random random = new Random();
+                        do {
+                            newId = 10000 + random.nextInt(90000);
+                            ChannelingRoomProjection existingRoom = medicalCenterRepo.getMedicalCenterByChannelingRoom(newId);
+                            exists = existingRoom != null;
+                        } while (exists);
+                        room.setId(newId);
+                    }
                 }
+                existingCenter.setChannelingRooms(incomingRooms);
             }
-            existingCenter.setChannelingRooms(incomingRooms);
-        }
-
-        return medicalCenterRepo.save(existingCenter);
+            return medicalCenterRepo.save(existingCenter);
+        }catch (ParseException e) {
+                throw new RuntimeException("Time format is invalid. Expected format: HH:mm:ss", e);
+            }
     }
 
     @Override

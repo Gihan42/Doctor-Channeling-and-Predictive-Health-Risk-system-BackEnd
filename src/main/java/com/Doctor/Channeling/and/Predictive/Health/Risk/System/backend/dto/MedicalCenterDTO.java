@@ -19,8 +19,8 @@ public class MedicalCenterDTO {
     private String email;
     private String address;
     private String distric;
-    private Date openTime;
-    private Date closeTime;
+    private String openTime;
+    private String closeTime;
     private double channelingFee;
     private long centerTypeId;
     private String status;
