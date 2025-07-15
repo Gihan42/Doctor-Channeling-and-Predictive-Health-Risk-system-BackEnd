@@ -71,8 +71,8 @@ public class DoctorController {
                 HttpStatus.OK
         );
     }
-    @DeleteMapping(path = "/delete")
-    public ResponseEntity<StandardResponse> deleteDoctor(@RequestParam long id,
+    @DeleteMapping(path = "/delete",params = {"id"})
+    public ResponseEntity<StandardResponse> deleteDoctor(@RequestParam("id") long id,
                                                          @RequestAttribute String type){
         Doctor doctor = doctorService.deleteDoctor(id, type);
         return new ResponseEntity<>(
