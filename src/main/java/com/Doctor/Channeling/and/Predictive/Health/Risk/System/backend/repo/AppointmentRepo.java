@@ -4,6 +4,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Ap
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Payment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.TodayAppointmentProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -129,4 +130,28 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Long> {
 
     @Query(value ="SELECT COUNT(*) AS appointment_count FROM appointment WHERE appointment_status ='Pending'",nativeQuery = true)
     int countPendingAppointments();
+
+    @Query(value = """
+        SELECT 
+            d.full_name AS doctorName,
+            a.appointment_time AS appointmentTime,
+            mc.center_name AS medicalCenterName,
+            s.start_time AS startTime,
+            s.end_time AS endTime
+        FROM 
+            appointment a
+        JOIN 
+            doctor d ON a.doctor_id = d.doctor_id
+        JOIN 
+            medicle_center mc ON a.medicle_center_id = mc.medicle_center_id
+        JOIN 
+            doctor_medical_center_room_schedule s 
+            ON a.doctor_id = s.doctor_id 
+            AND a.medicle_center_id = s.medical_center_id 
+            AND a.room_id = s.channeling_room_id
+        WHERE 
+            a.appointment_status = 'Pending'
+            AND DATE(a.appointment_date) = CURDATE()
+        """, nativeQuery = true)
+    List<TodayAppointmentProjection> getTodayPendingAppointments();
 }

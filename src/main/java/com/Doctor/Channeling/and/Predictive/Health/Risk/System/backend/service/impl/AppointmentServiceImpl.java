@@ -5,6 +5,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Ap
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.DoctorMedicalCenterRoomSchedule;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.TodayAppointmentProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomAppointmentException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.AppointmentRepo;
@@ -106,9 +107,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<String[]> generateTimeSlots(String startTime, String endTime, int patientCount) {
         List<String[]> slots = new ArrayList<>();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date start = sdf.parse(startTime);
-            Date end = sdf.parse(endTime);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("hh.mm a"); // for input like "6.00 PM"
+            SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm");  // 24-hour format for output
+
+            Date start = inputFormat.parse(startTime);
+            Date end = inputFormat.parse(endTime);
 
             long totalMinutes = (end.getTime() - start.getTime()) / (60 * 1000);
             long slotMinutes = totalMinutes / patientCount;
@@ -121,7 +124,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                 calendar.add(Calendar.MINUTE, (int) slotMinutes);
                 Date slotEnd = calendar.getTime();
 
-                slots.add(new String[]{sdf.format(slotStart), sdf.format(slotEnd)});
+                slots.add(new String[]{
+                        outputFormat.format(slotStart),
+                        outputFormat.format(slotEnd)
+                });
             }
 
         } catch (Exception e) {
@@ -129,6 +135,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return slots;
     }
+
 
 
     public static Date getTodayDateOnly() {
@@ -317,15 +324,32 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepo.countPendingAppointments();
     }
 
-    private Date parseTimeOnly(String timeStr) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            return sdf.parse(timeStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
+    @Override
+    public List<TodayAppointmentProjection> getTodayPendingAppointments(String type) {
+        if (!type.equals("Admin")) {
+            throw new CustomBadCredentialsException("dont have permission");
         }
+        return appointmentRepo.getTodayPendingAppointments();
     }
+
+    private Date parseTimeOnly(String timeStr) {
+        List<String> possibleFormats = Arrays.asList(
+                "HH:mm",       // 24-hour (e.g., 14:30)
+                "hh:mm a",     // 12-hour with AM/PM (e.g., 09:00 PM)
+                "h:mm a",      // single-digit hour with AM/PM (e.g., 9:00 PM)
+                "h.mm a",      // e.g., 9.00 PM
+                "hh.mm a"      // e.g., 09.00 PM
+        );
+
+        for (String format : possibleFormats) {
+            try {
+                return new SimpleDateFormat(format, Locale.ENGLISH).parse(timeStr.trim());
+            } catch (ParseException ignored) {}
+        }
+
+        throw new RuntimeException("Time format is invalid. Expected formats: " + possibleFormats);
+    }
+
     private String getDayNameFromDate(Date date) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         DayOfWeek dayOfWeek = localDate.getDayOfWeek();

@@ -4,6 +4,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.Appoi
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Appointment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.TodayAppointmentProjection;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalTime;
@@ -17,5 +18,5 @@ public interface AppointmentService {
     Appointment deleteAppointment(long appointmentId, String type);
     List<AppointmentDetailsForDashBoardProjection> findAppointmentDetailsByPatientId(long patientId,String type);
     int countByActiveDoctors(String type);
-
+    List<TodayAppointmentProjection> getTodayPendingAppointments(String type);
 }

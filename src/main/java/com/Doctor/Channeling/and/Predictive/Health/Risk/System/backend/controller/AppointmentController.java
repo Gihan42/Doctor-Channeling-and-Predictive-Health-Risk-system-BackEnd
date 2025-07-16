@@ -5,6 +5,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.Docto
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Appointment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsForDashBoardProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.TodayAppointmentProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.AppointmentService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.StandardResponse;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +85,15 @@ public class AppointmentController {
         int count = appointmentService.countByActiveDoctors(type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", count),
+                HttpStatus.OK
+        );
+    }
+    
+    @GetMapping(path = "/todayPendingAppointments")
+    public ResponseEntity<StandardResponse> getTodayPendingAppointments(@RequestAttribute String type) {
+        List<TodayAppointmentProjection> todayPendingAppointments = appointmentService.getTodayPendingAppointments(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", todayPendingAppointments),
                 HttpStatus.OK
         );
     }
