@@ -76,4 +76,13 @@ public class AdminController {
       );
   }
 
+  @GetMapping(params = {"id"})
+    public ResponseEntity<StandardResponse> getAdminById(@RequestParam long id, @RequestAttribute String type) {
+        Admin admin = adminService.getAdminById(id, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "loaded", admin),
+                HttpStatus.OK
+        );
+    }
+
 }

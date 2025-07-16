@@ -15,6 +15,6 @@ public interface AdminService {
     Admin deleteAdmin(long id, String type);
     Admin getAdminByEmail(String email,String type);
     String updateUserPassword(UserPasswordDTO dto, String type);
-
+    Admin getAdminById(long id, String type);
 
 }

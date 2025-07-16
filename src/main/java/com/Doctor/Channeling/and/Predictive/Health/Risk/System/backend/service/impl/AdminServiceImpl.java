@@ -123,4 +123,12 @@ public class AdminServiceImpl implements AdminService {
         }
         throw new CustomAdminException("user current password is wrong! ");
     }
+
+    @Override
+    public Admin getAdminById(long id, String type) {
+        if (!type.equals("Admin")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return adminRepo.getAdminById(id);
+    }
 }
