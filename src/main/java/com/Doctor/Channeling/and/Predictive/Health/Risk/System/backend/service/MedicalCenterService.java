@@ -19,5 +19,6 @@ public interface MedicalCenterService {
     MedicalCenter deleteMedicalCenter(long id, String type);
     List<ChannelingRoomProjection> getAllChannelingRoomsByMedicalCenterId(long id, String type);
     List<MedicalCentersAndIds> getAllMedicalCentersAndIds(String type);
+    MedicalCenter findMedicalCenterById(long id ,String type);
 
 }

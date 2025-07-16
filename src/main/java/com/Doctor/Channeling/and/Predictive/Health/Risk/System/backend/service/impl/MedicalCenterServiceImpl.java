@@ -274,4 +274,12 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
         return medicalCenterRepo.getAllActiveMedicalCentersAndIds();
     }
 
+    @Override
+    public MedicalCenter findMedicalCenterById(long id, String type) {
+        if (!type.equals("Admin")&& !type.equals("Patient")) {
+            throw new CustomBadCredentialsException("Don't have permission");
+        }
+        return medicalCenterRepo.findMedicalCenterById(id);
+    }
+
 }

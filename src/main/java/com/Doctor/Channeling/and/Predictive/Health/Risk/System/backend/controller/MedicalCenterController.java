@@ -102,4 +102,14 @@ public class MedicalCenterController {
         );
     }
 
+    @GetMapping(path = "/getById", params = {"id"})
+    public ResponseEntity<StandardResponse> findMedicalCenterById(@RequestParam long id,
+                                                                   @RequestAttribute String type) {
+        MedicalCenter medicalCenter = medicalCenterService.findMedicalCenterById(id, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", medicalCenter),
+                HttpStatus.OK
+        );
+    }
+
 }
