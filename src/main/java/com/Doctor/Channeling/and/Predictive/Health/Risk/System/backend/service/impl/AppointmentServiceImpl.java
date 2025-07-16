@@ -42,6 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Scheduled(cron = "* * * * * *")
     public void assignTimeToPendingAppointments() {
+
         List<Appointment> appointments = appointmentRepo.findByAppointmentDateAndStatus(getTodayDateOnly());
 
         Map<Long, List<Appointment>> appointmentsByDoctor = appointments.stream()
