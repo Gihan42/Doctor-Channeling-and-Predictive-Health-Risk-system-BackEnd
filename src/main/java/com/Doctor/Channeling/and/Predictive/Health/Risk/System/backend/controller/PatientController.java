@@ -87,4 +87,13 @@ public class PatientController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping(path = "/count")
+    public ResponseEntity<StandardResponse> countPatientStatus(@RequestAttribute String type) {
+        long count = patientService.countPatientStatus(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", count),
+                HttpStatus.OK
+        );
+    }
 }

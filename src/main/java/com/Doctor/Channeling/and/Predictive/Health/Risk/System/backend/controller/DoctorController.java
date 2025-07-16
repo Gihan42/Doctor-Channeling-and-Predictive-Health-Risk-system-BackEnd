@@ -91,4 +91,13 @@ public class DoctorController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping(path = "/count")
+    public ResponseEntity<StandardResponse> countDoctorsByStatusActive(@RequestAttribute String type) {
+        int count = doctorService.countDoctorsByStatusActive(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", count),
+                HttpStatus.OK
+        );
+    }
 }

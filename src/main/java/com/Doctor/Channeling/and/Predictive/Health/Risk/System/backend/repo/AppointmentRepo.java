@@ -127,4 +127,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Long> {
     List<AppointmentDetailsForDashBoardProjection> findAppointmentDetailsByPatientId(@Param("patientId") Long patientId);
 
 
+    @Query(value ="SELECT COUNT(*) AS appointment_count FROM appointment WHERE appointment_status ='Pending'",nativeQuery = true)
+    int countPendingAppointments();
 }

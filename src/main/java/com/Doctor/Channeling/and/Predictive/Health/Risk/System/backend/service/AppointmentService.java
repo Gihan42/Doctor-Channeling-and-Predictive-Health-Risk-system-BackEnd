@@ -16,4 +16,6 @@ public interface AppointmentService {
     List<AppointmentProjection> findAllAppointmentDetailsByPatientId( long patientId,String type);
     Appointment deleteAppointment(long appointmentId, String type);
     List<AppointmentDetailsForDashBoardProjection> findAppointmentDetailsByPatientId(long patientId,String type);
+    int countByActiveDoctors(String type);
+
 }

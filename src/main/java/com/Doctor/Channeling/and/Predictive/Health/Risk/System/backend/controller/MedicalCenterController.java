@@ -112,4 +112,13 @@ public class MedicalCenterController {
         );
     }
 
+    @GetMapping(path = "/count")
+    public ResponseEntity<StandardResponse> getCountOfMedicalCenters(@RequestAttribute String type) {
+        int count = medicalCenterService.getCountOfMedicalCenters(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", count),
+                HttpStatus.OK
+        );
+    }
+
 }

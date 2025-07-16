@@ -17,6 +17,7 @@ public interface PatientService {
     Patient getPatientByEmail(String email, String type);
     String updateUserPassword(UserPasswordDTO dto, String type);
     List<String>  getPatientNearByCity(long id, String type);
+    int countPatientStatus(String type);
 
 
 }

@@ -121,4 +121,7 @@ public interface MedicalCenterRepo extends JpaRepository<MedicalCenter, Long> {
 
     @Query(value = "select medicle_center_id as Id , center_name as Name from medicle_center where  status = 'Active'",nativeQuery = true)
     List<MedicalCentersAndIds> getAllActiveMedicalCentersAndIds();
+
+    @Query(value="SELECT COUNT(*) AS medicle_center_count FROM medicle_center WHERE status ='Active'",nativeQuery = true)
+    int getActiveMedicalCenterCount();
 }

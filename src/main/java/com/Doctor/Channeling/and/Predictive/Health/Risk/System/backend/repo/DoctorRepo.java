@@ -92,5 +92,7 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
     List<Doctor> findDoctorsByMedicalCenterId(@Param("medicalCenterId") Long medicalCenterId,@Param("specializationId") Long specializationId);
 
 
+    @Query(value = "SELECT COUNT(*) AS doctor_count FROM doctor WHERE status ='Active'", nativeQuery = true)
+    int countDoctorsByStatusActive();
 
 }

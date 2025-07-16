@@ -206,6 +206,15 @@ public class PatientServiceImpl implements PatientService {
         }
        throw new CustomPatientException("Patient not found ");
     }
+
+    @Override
+    public int countPatientStatus(String type) {
+        if (!type.equals("Admin")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return (int) patientRepo.countPatientStatus();
+    }
+
     private List<String> parseNominatimResponse(String json) {
         List<String> cities = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

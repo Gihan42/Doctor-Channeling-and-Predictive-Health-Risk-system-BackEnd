@@ -309,6 +309,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepo.findAppointmentDetailsByPatientId(patientId);
     }
 
+    @Override
+    public int countByActiveDoctors(String type) {
+        if (!type.equals("Admin")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return appointmentRepo.countPendingAppointments();
+    }
+
     private Date parseTimeOnly(String timeStr) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");

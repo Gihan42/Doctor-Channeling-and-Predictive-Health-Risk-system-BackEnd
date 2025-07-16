@@ -158,4 +158,12 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return doctorRepo.findDoctorsByMedicalCenterId(medicalCenterId, specializationId);
     }
+
+    @Override
+    public int countDoctorsByStatusActive(String type) {
+        if ( !type.equals("Admin")){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return doctorRepo.countDoctorsByStatusActive();
+    }
 }

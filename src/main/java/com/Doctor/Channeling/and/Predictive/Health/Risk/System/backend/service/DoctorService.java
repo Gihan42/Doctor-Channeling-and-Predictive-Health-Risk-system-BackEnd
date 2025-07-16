@@ -17,4 +17,5 @@ public interface DoctorService {
     String updateUserPassword(UserPasswordDTO dto, String type);
     Doctor deleteDoctor(long id, String type);
     List<Doctor> findDoctorsByMedicalCenterId( long medicalCenterId,long specializationId,String type);
+    int countDoctorsByStatusActive(String type);
 }

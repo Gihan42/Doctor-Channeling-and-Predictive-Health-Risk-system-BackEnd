@@ -78,4 +78,13 @@ public class AppointmentController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping(path = "/count")
+    public ResponseEntity<StandardResponse> countByActiveDoctors(@RequestAttribute String type) {
+        int count = appointmentService.countByActiveDoctors(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", count),
+                HttpStatus.OK
+        );
+    }
 }

@@ -20,5 +20,6 @@ public interface MedicalCenterService {
     List<ChannelingRoomProjection> getAllChannelingRoomsByMedicalCenterId(long id, String type);
     List<MedicalCentersAndIds> getAllMedicalCentersAndIds(String type);
     MedicalCenter findMedicalCenterById(long id ,String type);
+    int getCountOfMedicalCenters(String type);
 
 }
