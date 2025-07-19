@@ -4,6 +4,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.Docto
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.DoctorMedicalCenterRoomSchedule;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.DoctorScheduleProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.MedicalCenterWithTypeProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.ScheduleProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.DoctorMedicalCenterRoomScheduleService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.StandardResponse;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +93,15 @@ public class DoctorMedicalCenterRoomScheduleController {
         List<String> startTimeByDoctorId = doctorMedicalCenterRoomScheduleService.findStartTimeByDoctorId(doctorId, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", startTimeByDoctorId),
+                HttpStatus.OK
+        );
+    }
+    @GetMapping(path = "/all-active-schedules")
+    public ResponseEntity<StandardResponse> findAllActiveDoctorSchedules(@RequestAttribute String type) {
+        List<ScheduleProjection> allActiveDoctorSchedules =
+                doctorMedicalCenterRoomScheduleService.findAllActiveDoctorSchedules(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", allActiveDoctorSchedules),
                 HttpStatus.OK
         );
     }

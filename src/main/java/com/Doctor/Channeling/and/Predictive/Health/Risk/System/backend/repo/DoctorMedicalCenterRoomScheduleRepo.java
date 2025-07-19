@@ -2,6 +2,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo;
 
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.DoctorMedicalCenterRoomSchedule;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.DoctorScheduleProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.ScheduleProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -96,6 +97,31 @@ public interface DoctorMedicalCenterRoomScheduleRepo extends JpaRepository<Docto
 
     @Query(value = "select * from doctor_medical_center_room_schedule where doctor_id=:doctorId and medical_center_id = :medicalCenterId and day_of_week=:dayOfWeek ",nativeQuery = true)
     DoctorMedicalCenterRoomSchedule findByDoctorIdAndMedicalCenterIdAndDayOfWeekAndStatusActive(@Param("doctorId") Long doctorId, @Param("medicalCenterId") Long medicalCenterId, @Param("dayOfWeek") String dayOfWeek);
+
+    @Query(value = "SELECT " +
+            "dmrs.doctor_medical_center_room_schedule_id AS scheduleId, " +
+            "dmrs.day_of_week AS dayOfWeek, " +
+            "dmrs.start_time AS startTime, " +
+            "dmrs.end_time AS endTime, " +
+            "dmrs.status AS scheduleStatus, " +
+            "d.full_name AS doctorName, " +
+            "mc.center_name AS medicalCenterName, " +
+            "(SELECT JSON_UNQUOTE(JSON_EXTRACT(room.room_data, '$.roomName')) " +
+            " FROM JSON_TABLE( " +
+            "   mc.channeling_rooms, " +
+            "   '$[*]' COLUMNS( " +
+            "       room_id BIGINT PATH '$.id', " +
+            "       room_data JSON PATH '$' " +
+            "   ) " +
+            ") AS room " +
+            " WHERE room.room_id = dmrs.channeling_room_id " +
+            " LIMIT 1) AS roomName " +
+            "FROM doctor_medical_center_room_schedule dmrs " +
+            "JOIN doctor d ON dmrs.doctor_id = d.doctor_id " +
+            "JOIN medicle_center mc ON dmrs.medical_center_id = mc.medicle_center_id " +
+            "WHERE dmrs.status = 'Active'", nativeQuery = true)
+    List<ScheduleProjection> findAllActiveDoctorSchedules();
+
 
 
 }

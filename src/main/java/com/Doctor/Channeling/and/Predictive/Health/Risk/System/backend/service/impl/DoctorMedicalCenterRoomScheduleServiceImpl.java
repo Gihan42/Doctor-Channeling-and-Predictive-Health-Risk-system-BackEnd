@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.DoctorMedicalCenterRoomScheduleDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.DoctorMedicalCenterRoomSchedule;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.DoctorScheduleProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.ScheduleProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomDoctorMedicalCenterRoomSchedule;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.DoctorMedicalCenterRoomScheduleRepo;
@@ -111,5 +112,13 @@ public class DoctorMedicalCenterRoomScheduleServiceImpl implements DoctorMedical
             throw new CustomBadCredentialsException("dont have permission");
         }
         return doctorMedicalCenterRoomScheduleRepo.findStartTimeByDoctorId(doctorId);
+    }
+
+    @Override
+    public List<ScheduleProjection> findAllActiveDoctorSchedules(String type) {
+        if (!type.equals("Admin") ){
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return doctorMedicalCenterRoomScheduleRepo.findAllActiveDoctorSchedules();
     }
 }
