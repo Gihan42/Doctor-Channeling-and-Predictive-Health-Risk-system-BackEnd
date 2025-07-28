@@ -1,0 +1,130 @@
+erDiagram
+
+    ROLE{
+        serial  *id PK
+        varchar(255) role
+        varchar(255) status
+    }
+
+    ADMIN{
+        serial  *id PK
+        varchar(255) email
+        varchar(255) password
+        int roleId FK
+    }
+
+
+    DOCTOR{
+        serial  *id PK
+        varchar(255) fullName
+        varchar(255) gender
+        varchar(255) contact
+        varchar(255) address1
+        varchar(255) address2
+        varchar(255) nic
+        varchar(255) email
+        varchar(255) distric
+        varchar(255) password "Hashed password for authentication"
+        varchar(255) medicalRegistrationNo "Medical council registration number"
+        int yearsOfExperience "Experience in years"
+        varchar(255) hospitalAffiliation "Current working hospital/clinic"
+        int qualificationId FK  "QULIFICATION pk pass to here but when doc save automatically if not exit save QULIFICATION"
+        int specializationId FK "SPECIALZATION pk pass to here but when doc save automatically if not exit save SPECIALZATION"
+        varchar(255) status "Whether the doctor is currently active in the system"
+        float doctorFee
+        int roleId FK
+    }
+
+    SPECIALZATION{
+        serial  *id PK
+        varchar(255) specializatio "	Area of specialization (e.g., Cardiologist, Oncologist)"
+        varchar(255) status "active in the syste"
+    }
+
+    QULIFICATION{
+        serial  *id PK
+        varchar(255) qualification "Medical degrees (e.g., MBBS, MD)"
+        varchar(255) status "active in the syste"
+    }
+
+    PATIENT{
+        serial  *id PK
+        varchar(255) fullName
+        varchar(255) email
+        varchar(255) password
+        varchar(255) gender
+        timestamp dateOfBirthDay
+        int age
+        varchar(255) contact
+        varchar(255) address
+        varchar(255) status "Whether patient account is active"
+        int roleId FK
+    }
+
+    MEDICLE_CENTER{
+        serial  *id PK
+        varchar(255) centerName
+        varchar(255) registrationNumber "Official registration number (optional but useful for authenticity)"
+        varchar(255) contact1
+        varchar(255) contact2
+        varchar(255) email
+        varchar(255) address
+        varchar(255) distric
+        timestamp openTime
+        timestamp closeTime
+        int centerTypeId FK "MEDICLE_CENTER_TYPE pk pass to here but when medicle_center save automatically if not exit save MEDICLE_CENTER_TYPE"
+        float channelingFee
+        varchar(255) status
+    }
+
+    MEDICLE_CENTER_TYPE{
+        serial  *id PK
+        varchar(255) centerType "Type of medical center ('Hospital', 'Clinic', 'Private Practice', 'Diagnostic Center')"
+        varchar(255) status
+    }
+
+    DOCTOR_MEDICAL_CENTER_ROOM_SCHEDULE{
+        serial *id PK
+        int doctorId FK  "DOCTOR.id"
+        int medicalCenterId FK "MEDICLE_CENTER.id"
+        int roomId FK " CHANNELING_ROOM.id"
+        varchar(10) dayOfWeek  " 'Monday', 'Tuesday'"
+        time startTime
+        time endTime
+        varchar(255) status "'ACTIVE', 'INACTIVE'"
+    }
+
+    CHANNELING_ROOM {
+        serial *id PK
+        int medicalCenterId FK " MEDICLE_CENTER.id"
+        varchar(100) roomName " 'Room A1',' Cardio 2'"
+        varchar(255) description " optional: add notes or equipment info"
+        varchar(255) status " 'AVAILABLE', 'OCCUPIED'"
+    }
+
+    APPOINTMENT {
+        serial *id PK
+        int  patientId FK "The patient who made the appointment"
+        varchar(255) patientName
+        int doctorId FK "The doctor being channeled"
+        int medicleCenterId FK "The location of the appointment"
+        int roomId FK "Specific room for appointment"
+        int sheduleId FK  "The selected schedule (day, time)"
+        timestamp appointmentDate
+        timestamp appointmentTime
+        int channelNumber "Queue number or channel numbe"
+        timestamp bookingDate "When the appointment was booked"
+        varchar(255) paymentStatus "Online payment status ('PAID', 'UNPAID', 'REFUNDED')"
+    }
+
+    PAYMENT{
+        serial *id PK
+        int appointmentId FK
+        int patientId FK
+        float amount "get APPOINTMENT table  medicleCenterId.cghannelingFee + doctorId.doctorFee"
+        varchar(255) paymentMethod
+        varchar(255) paymentStatus "Result of payment('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED')"
+        timestamp paymentDate
+        timestamp paymentTime
+
+    }
