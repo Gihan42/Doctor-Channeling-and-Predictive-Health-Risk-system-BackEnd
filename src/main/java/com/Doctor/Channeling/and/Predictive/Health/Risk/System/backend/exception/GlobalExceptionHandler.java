@@ -65,4 +65,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAppointmentException(CustomAppointmentException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(CustomPatientReviewException.class)
+    public ResponseEntity<String> handlePatientReviewException(CustomPatientReviewException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

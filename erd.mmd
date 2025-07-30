@@ -1,6 +1,32 @@
 erDiagram
 
-    ROLE{
+
+    USER_ROLE ||--|| DOCTOR:roleId
+    USER_ROLE ||--|| ADMIN:roleId
+    USER_ROLE ||--|| PATIENT:roleId
+
+    SPECIALZATION ||--|| DOCTOR:specializationId
+    QULIFICATION ||--|| DOCTOR:qualificationId
+
+    MEDICLE_CENTER_TYPE ||--|| MEDICLE_CENTER:centerTypeId
+
+    MEDICLE_CENTER ||--o{ DOCTOR_MEDICAL_CENTER_ROOM_SCHEDULE :medicalCenterId
+    DOCTOR ||--o{ DOCTOR_MEDICAL_CENTER_ROOM_SCHEDULE :doctorId
+
+
+    MEDICLE_CENTER ||--o{ PAYMENT :medicalCenterId
+    DOCTOR ||--o{ PAYMENT:doctorId
+    PATIENT ||--o{ PAYMENT:patientId
+
+    PAYMENT||--|| APPOINTMENT:paymentId
+
+    MEDICLE_CENTER||--o{ APPOINTMENT:medicleCenterId
+    DOCTOR ||--o{ APPOINTMENT:doctorId
+    PATIENT ||--o{ APPOINTMENT:patientId
+    DOCTOR_MEDICAL_CENTER_ROOM_SCHEDULE ||--o{ APPOINTMENT:sheduleId
+
+
+    USER_ROLE{
         serial  *id PK
         varchar(255) role
         varchar(255) status
@@ -11,6 +37,9 @@ erDiagram
         varchar(255) email
         varchar(255) password
         int roleId FK
+        varchar(255) fullName
+        varchar(255) uniqId
+        varchar(255) status
     }
 
 
@@ -23,7 +52,7 @@ erDiagram
         varchar(255) address2
         varchar(255) nic
         varchar(255) email
-        varchar(255) distric
+        varchar(255) uniqId
         varchar(255) password "Hashed password for authentication"
         varchar(255) medicalRegistrationNo "Medical council registration number"
         int yearsOfExperience "Experience in years"
@@ -33,17 +62,18 @@ erDiagram
         varchar(255) status "Whether the doctor is currently active in the system"
         float doctorFee
         int roleId FK
+        int dailyPatientCount
     }
 
     SPECIALZATION{
         serial  *id PK
-        varchar(255) specializatio "	Area of specialization (e.g., Cardiologist, Oncologist)"
+        varchar(255) specializationName "Area of specialization (e.g., Cardiologist, Oncologist)"
         varchar(255) status "active in the syste"
     }
 
     QULIFICATION{
         serial  *id PK
-        varchar(255) qualification "Medical degrees (e.g., MBBS, MD)"
+        varchar(255) qualificationName "Medical degrees (e.g., MBBS, MD)"
         varchar(255) status "active in the syste"
     }
 
@@ -55,10 +85,12 @@ erDiagram
         varchar(255) gender
         timestamp dateOfBirthDay
         int age
+        varchar(255) city
         varchar(255) contact
         varchar(255) address
         varchar(255) status "Whether patient account is active"
         int roleId FK
+        varchar(255) uniqId
     }
 
     MEDICLE_CENTER{
@@ -69,12 +101,13 @@ erDiagram
         varchar(255) contact2
         varchar(255) email
         varchar(255) address
-        varchar(255) distric
+        varchar(255) district
         timestamp openTime
         timestamp closeTime
         int centerTypeId FK "MEDICLE_CENTER_TYPE pk pass to here but when medicle_center save automatically if not exit save MEDICLE_CENTER_TYPE"
         float channelingFee
         varchar(255) status
+        text channelingRooms "EXAMPLE:-[{id:99504,medicalCenterId:0,roomName:Consult Room,description:Wisdom tooth extractions and minor surgeries,status:Available}]"
     }
 
     MEDICLE_CENTER_TYPE{
@@ -87,20 +120,14 @@ erDiagram
         serial *id PK
         int doctorId FK  "DOCTOR.id"
         int medicalCenterId FK "MEDICLE_CENTER.id"
-        int roomId FK " CHANNELING_ROOM.id"
+        int roomId  " CHANNELING_ROOM.id"
         varchar(10) dayOfWeek  " 'Monday', 'Tuesday'"
         time startTime
         time endTime
         varchar(255) status "'ACTIVE', 'INACTIVE'"
     }
 
-    CHANNELING_ROOM {
-        serial *id PK
-        int medicalCenterId FK " MEDICLE_CENTER.id"
-        varchar(100) roomName " 'Room A1',' Cardio 2'"
-        varchar(255) description " optional: add notes or equipment info"
-        varchar(255) status " 'AVAILABLE', 'OCCUPIED'"
-    }
+
 
     APPOINTMENT {
         serial *id PK
@@ -108,18 +135,21 @@ erDiagram
         varchar(255) patientName
         int doctorId FK "The doctor being channeled"
         int medicleCenterId FK "The location of the appointment"
-        int roomId FK "Specific room for appointment"
+        int roomId  "Specific room for appointment"
         int sheduleId FK  "The selected schedule (day, time)"
         timestamp appointmentDate
         timestamp appointmentTime
+        timestamp appointmentEndTime
         int channelNumber "Queue number or channel numbe"
         timestamp bookingDate "When the appointment was booked"
-        varchar(255) paymentStatus "Online payment status ('PAID', 'UNPAID', 'REFUNDED')"
+        varchar(255) appointmentStatus " status ('pending', 'closed')"
+        int paymentId FK
     }
 
     PAYMENT{
         serial *id PK
-        int appointmentId FK
+        int medicalCenterId FK
+        int doctorId FK
         int patientId FK
         float amount "get APPOINTMENT table  medicleCenterId.cghannelingFee + doctorId.doctorFee"
         varchar(255) paymentMethod
