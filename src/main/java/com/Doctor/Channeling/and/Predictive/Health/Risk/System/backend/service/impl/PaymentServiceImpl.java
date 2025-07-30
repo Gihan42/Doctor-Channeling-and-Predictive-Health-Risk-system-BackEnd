@@ -5,6 +5,7 @@ import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Do
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.MedicalCenter;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Payment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.PaymentSummaryProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.CustomBadCredentialsException;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.DoctorRepo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo.MedicalCenterRepo;
@@ -146,6 +147,16 @@ public class PaymentServiceImpl implements PaymentService {
         }
         return paymentRepo.getAppointmentsWithDetailsByPatientId(patientId);
     }
+
+    @Override
+    public List<PaymentSummaryProjection> getPaymentSummary(String type) {
+        if (!type.equals("Admin")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return paymentRepo.getPaymentSummary();
+    }
+
+
 
     private Payment savePayment(PaymentDTO paymentDto) {
         Doctor byIdAndStatus = doctorRepo.findByIdAndStatus(paymentDto.getDoctorId());

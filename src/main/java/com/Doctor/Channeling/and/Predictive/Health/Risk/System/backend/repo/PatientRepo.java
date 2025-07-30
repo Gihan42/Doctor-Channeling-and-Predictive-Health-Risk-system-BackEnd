@@ -2,6 +2,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo;
 
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Patient;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.UserRoles;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.PaymentSummaryProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,7 @@ public interface PatientRepo extends JpaRepository<Patient,Long> {
 
     @Query(value = "select * from patient where email = :email and status = 'Active'",nativeQuery = true)
     Patient getPatientByEmail(@Param("email") String email);
+
+
+
 }

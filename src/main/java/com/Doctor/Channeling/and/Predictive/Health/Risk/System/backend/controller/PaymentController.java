@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.controll
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.PaymentDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.dto.SignUpDTO;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.PaymentSummaryProjection;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.service.PaymentService;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.LoginResponse;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.StandardResponse;
@@ -37,6 +38,15 @@ public class PaymentController {
                 paymentService.getAppointmentsWithDetailsByPatientId(patientId, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", appointmentsWithDetailsByPatientId),
+                HttpStatus.OK
+        );
+    }
+    
+    @GetMapping(path = "/payemntSummary")
+    public ResponseEntity<StandardResponse> getPaymentSummary(@RequestAttribute String type) {
+        List<PaymentSummaryProjection> paymentSummary = paymentService.getPaymentSummary(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", paymentSummary),
                 HttpStatus.OK
         );
     }

@@ -3,6 +3,7 @@ package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.repo;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Patient;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.Payment;
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.AppointmentDetailsProjection;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.entity.custom.PaymentSummaryProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -52,5 +53,17 @@ public interface PaymentRepo extends JpaRepository<Payment,Long> {
     List<AppointmentDetailsProjection> getAppointmentsWithDetailsByPatientId(@Param("patientId") Long patientId);
 
 
-
+    @Query(value = "SELECT\n" +
+            "    p.id AS paymentId,\n" +
+            "    pa.patient_id AS patientId,\n" +
+            "    pa.full_name AS patientName,\n" +
+            "    mc.medicle_center_id AS medicalCenterId,\n" +
+            "    mc.center_name AS medicalCenterName,\n" +
+            "    p.amount AS paidAmount,\n" +
+            "    p.payment_date AS paymentDate\n" +
+            "FROM payment p\n" +
+            "JOIN patient pa ON p.patient_id = pa.patient_id\n" +
+            "JOIN medicle_center mc ON p.medical_center_id = mc.medicle_center_id",
+            nativeQuery = true)
+    List<PaymentSummaryProjection> getPaymentSummary();
 }
