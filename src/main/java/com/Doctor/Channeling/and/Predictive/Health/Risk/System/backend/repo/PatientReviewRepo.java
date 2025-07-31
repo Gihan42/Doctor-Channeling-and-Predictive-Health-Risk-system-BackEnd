@@ -33,4 +33,19 @@ public interface PatientReviewRepo extends JpaRepository<PatientReview,Long> {
             nativeQuery = true)
     List<PatientReviewProjection> getAllPatientReviewsWithPatientName();
 
+
+    @Query(value = "SELECT\n" +
+            "    pr.patient_review_id as patientReviewId,\n" +
+            "    pr.comment as comment,\n" +
+            "    pr.date as date ,\n" +
+            "    pr.viewed as viewed,\n" +
+            "    pr.status as status,\n" +
+            "    p.full_name AS patientName\n" +
+            "FROM\n" +
+            "    patient_review pr\n" +
+            "        JOIN\n" +
+            "    patient p ON pr.patient_id = p.patient_id where pr.status ='Active'",
+            nativeQuery = true)
+    List<PatientReviewProjection> getAllPatientReviews();
+
 }

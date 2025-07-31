@@ -62,6 +62,24 @@ public class PatientReviewServiceImpl implements PatientReviewService {
     }
 
     @Override
+    public PatientReview inActivePatientReview(long patientReviewId, String type) {
+        if (!type.equals("Admin")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        PatientReview byPatientReviewId =
+                patientReviewRepo.findByPatientReviewId(patientReviewId);
+        if(!Objects.equals(byPatientReviewId, null)) {
+            if(byPatientReviewId.isViewed()) {
+                byPatientReviewId.setViewed(false);
+                return patientReviewRepo.save(byPatientReviewId);
+            } else {
+                throw new CustomPatientReviewException("You have already Inactive this review, you cannot inactive again.");
+            }
+        }
+        throw new CustomPatientReviewException("Comment already exists for this patient review ID ");
+    }
+
+    @Override
     public List<PatientReviewProjection> activePatientReview(String type) {
         if (!type.equals("Patient")) {
             throw new CustomBadCredentialsException("dont have permission");
@@ -84,5 +102,13 @@ public class PatientReviewServiceImpl implements PatientReviewService {
     }
     throw new CustomPatientReviewException("Comment already exists for this patient review ID: ");
 
+    }
+
+    @Override
+    public List<PatientReviewProjection> getAllPatientReviews(String type) {
+        if (!type.equals("Admin")) {
+            throw new CustomBadCredentialsException("dont have permission");
+        }
+        return patientReviewRepo.getAllPatientReviews();
     }
 }

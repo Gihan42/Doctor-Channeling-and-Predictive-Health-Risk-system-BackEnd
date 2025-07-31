@@ -12,7 +12,11 @@ public interface PatientReviewService {
 
     PatientReview activePatientReview(long patientReviewId, String type) ;
 
+    PatientReview inActivePatientReview(long patientReviewId, String type) ;
+
     List<PatientReviewProjection> activePatientReview(String type);
 
     PatientReview deletePatientReview(long patientReviewId, String type);
+
+    List<PatientReviewProjection>  getAllPatientReviews(String type);
 }

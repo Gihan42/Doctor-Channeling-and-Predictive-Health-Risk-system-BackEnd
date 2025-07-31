@@ -41,6 +41,17 @@ public class PatientReviewController {
         );
     }
 
+    @PutMapping(params = {"reviewId"})
+    public ResponseEntity<StandardResponse> InActiveReview(@RequestParam long reviewId,
+                                                         @RequestAttribute String type){
+        PatientReview patientReview =
+                patientReviewService.inActivePatientReview(reviewId, type);
+        return new ResponseEntity<>(
+                new StandardResponse(200,"success", patientReview),
+                HttpStatus.OK
+        );
+    }
+
     @GetMapping(path = "/getActiveReview")
     public ResponseEntity<StandardResponse> getActiveReview(@RequestAttribute String type) {
         List<PatientReviewProjection> patientReviewProjections =
@@ -57,6 +68,16 @@ public class PatientReviewController {
         PatientReview patientReview = patientReviewService.deletePatientReview(patientReviewId, type);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", patientReview),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping(path = "/getAllReviews")
+    public ResponseEntity<StandardResponse> getAllReviews(@RequestAttribute String type) {
+        List<PatientReviewProjection> patientReviewProjections =
+                patientReviewService.getAllPatientReviews(type);
+        return new ResponseEntity<>(
+                new StandardResponse(200, "success", patientReviewProjections),
                 HttpStatus.OK
         );
     }
