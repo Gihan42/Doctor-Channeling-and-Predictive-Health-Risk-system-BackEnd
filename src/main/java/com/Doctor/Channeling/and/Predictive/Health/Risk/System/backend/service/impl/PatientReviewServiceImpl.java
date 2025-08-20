@@ -105,10 +105,10 @@ public class PatientReviewServiceImpl implements PatientReviewService {
     }
 
     @Override
-    public List<PatientReviewProjection> getAllPatientReviews(String type) {
-        if (!type.equals("Admin")) {
-            throw new CustomBadCredentialsException("dont have permission");
-        }
+    public List<PatientReviewProjection> getAllPatientReviews() {
+//        if (!type.equals("Admin")) {
+//            throw new CustomBadCredentialsException("dont have permission");
+//        }
         return patientReviewRepo.getAllPatientReviews();
     }
 }

@@ -18,5 +18,5 @@ public interface PatientReviewService {
 
     PatientReview deletePatientReview(long patientReviewId, String type);
 
-    List<PatientReviewProjection>  getAllPatientReviews(String type);
+    List<PatientReviewProjection>  getAllPatientReviews();
 }

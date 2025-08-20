@@ -25,6 +25,8 @@ erDiagram
     PATIENT ||--o{ APPOINTMENT:patientId
     DOCTOR_MEDICAL_CENTER_ROOM_SCHEDULE ||--o{ APPOINTMENT:sheduleId
 
+    PATIENT ||--o{ PATIENT_REVIEW:patientId
+
 
     USER_ROLE{
         serial  *id PK
@@ -158,3 +160,12 @@ erDiagram
         timestamp paymentTime
 
     }
+    PATIENT_REVIEW{
+        serial *id PK
+        int patientId FK "The patient who made the review"
+        varchar(255) comment "Review text or feedback"
+        timestamp reviewDate
+        bool visible "Whether the review is visible to others"
+        varchar(255) status "Status of the review ('active', 'inactive')"
+
+ }

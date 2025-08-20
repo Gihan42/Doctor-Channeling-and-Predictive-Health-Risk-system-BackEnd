@@ -73,9 +73,9 @@ public class PatientReviewController {
     }
 
     @GetMapping(path = "/getAllReviews")
-    public ResponseEntity<StandardResponse> getAllReviews(@RequestAttribute String type) {
+    public ResponseEntity<StandardResponse> getAllReviews() {
         List<PatientReviewProjection> patientReviewProjections =
-                patientReviewService.getAllPatientReviews(type);
+                patientReviewService.getAllPatientReviews();
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", patientReviewProjections),
                 HttpStatus.OK
