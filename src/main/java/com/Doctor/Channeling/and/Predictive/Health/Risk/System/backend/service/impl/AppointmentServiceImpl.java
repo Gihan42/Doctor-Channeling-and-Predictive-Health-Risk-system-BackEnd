@@ -270,12 +270,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    @Override
+    /*@Override
     public String getOnGoingChannelingNumber(long patientId, String type) {
         if (!type.equals("Patient")) {
             throw new CustomBadCredentialsException("dont have permission");
         }
-        Appointment byPatientId = appointmentRepo.findByPatientId(patientId);
+        List<Appointment> byPatientId = appointmentRepo.findByPatientId(patientId);
         if (!Objects.equals(byPatientId, null)) {
             String currentChannelNumberByMedicineCenterIdAndRoomId
                     = appointmentRepo.getCurrentChannelNumberByMedicineCenterIdAndRoomId(
@@ -286,7 +286,31 @@ public class AppointmentServiceImpl implements AppointmentService {
             return currentChannelNumberByMedicineCenterIdAndRoomId;
         }
         return "your appointment is closed";
+    }*/
+    @Override
+    public String getOnGoingChannelingNumber(long patientId, String type) {
+        if (!"Patient".equals(type)) {
+            throw new CustomBadCredentialsException("You don't have permission");
+        }
+
+        List<Appointment> appointments = appointmentRepo.findByPatientId(patientId);
+        if (appointments != null && !appointments.isEmpty()) {
+            for (Appointment appointment : appointments) {
+                String currentChannelNumber = appointmentRepo.getCurrentChannelNumberByMedicineCenterIdAndRoomId(
+                        appointment.getAppointmentDate(),
+                        appointment.getMedicleCenterId(),
+                        appointment.getRoomId()
+                );
+
+                if (currentChannelNumber != null) {
+                    return currentChannelNumber; 
+                }
+            }
+        }
+
+        return "Your appointment is closed";
     }
+
 
     @Override
     public List<AppointmentProjection> findAllAppointmentDetailsByPatientId(long patientId, String type) {

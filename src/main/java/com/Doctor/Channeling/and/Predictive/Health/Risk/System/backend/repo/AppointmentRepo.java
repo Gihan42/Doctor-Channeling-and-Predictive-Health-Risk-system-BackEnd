@@ -60,7 +60,7 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Long> {
                                                               @Param("roomId")  long roomId);
 
     @Query(value = "select * from appointment where patient_id = :patientId",nativeQuery = true)
-    Appointment findByPatientId(@Param("patientId") long patientId);
+    List<Appointment> findByPatientId(@Param("patientId") long patientId);
 
     @Query(value = """
     SELECT

@@ -1,6 +1,7 @@
 package com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception;
 
 import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.exception.customException.*;
+import com.Doctor.Channeling.and.Predictive.Health.Risk.System.backend.util.response.StandardResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -29,7 +30,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlePatientException(CustomPatientException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
-
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<StandardResponse> commonExceptionHandler(Exception e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                new StandardResponse(422, "Operation Filed",  e.getMessage()));
+    }
 
     @ExceptionHandler(CustomDoctorException.class)
     public ResponseEntity<String> handleDoctorException(CustomDoctorException ex){
