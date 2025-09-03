@@ -227,7 +227,7 @@ public class PatientServiceImpl implements PatientService {
                     String city = address.path("city").asText();
 
                     if (city != null && !city.isEmpty()) {
-                        System.out.println("City: " + city);  // This will print "Colombo"
+                        System.out.println("City: " + city);
                         cities.add(city);
                     }
                 }
