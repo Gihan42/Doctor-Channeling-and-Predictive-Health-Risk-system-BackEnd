@@ -44,7 +44,7 @@ public interface PatientReviewRepo extends JpaRepository<PatientReview,Long> {
             "FROM\n" +
             "    patient_review pr\n" +
             "        JOIN\n" +
-            "    patient p ON pr.patient_id = p.patient_id where pr.status ='Active' and pr.viewed ='1'",
+            "    patient p ON pr.patient_id = p.patient_id where pr.status ='Active'",
             nativeQuery = true)
     List<PatientReviewProjection> getAllPatientReviews();
 
