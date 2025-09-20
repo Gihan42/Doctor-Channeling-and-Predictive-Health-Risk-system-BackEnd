@@ -107,11 +107,11 @@ public class DoctorMedicalCenterRoomScheduleServiceImpl implements DoctorMedical
     }
 
     @Override
-    public List<String> findStartTimeByDoctorId(long doctorId, String type) {
+    public List<String> findStartTimeByDoctorId(long doctorId, String dayOfWeek,String type) {
         if (!type.equals("Patient") ){
             throw new CustomBadCredentialsException("dont have permission");
         }
-        return doctorMedicalCenterRoomScheduleRepo.findStartTimeByDoctorId(doctorId);
+        return doctorMedicalCenterRoomScheduleRepo.findStartTimeByDoctorId(doctorId,dayOfWeek);
     }
 
     @Override

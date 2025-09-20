@@ -87,10 +87,12 @@ public class DoctorMedicalCenterRoomScheduleController {
         );
     }
 
-    @GetMapping(params = {"doctorId"})
+    @GetMapping(params = {"doctorId","dayOfWeek"})
     public ResponseEntity<StandardResponse> findStartTimeByDoctorId(@RequestParam("doctorId") long doctorId,
+                                                                     @RequestParam("dayOfWeek") String dayOfWeek,
                                                                      @RequestAttribute String type) {
-        List<String> startTimeByDoctorId = doctorMedicalCenterRoomScheduleService.findStartTimeByDoctorId(doctorId, type);
+        List<String> startTimeByDoctorId = doctorMedicalCenterRoomScheduleService.findStartTimeByDoctorId(doctorId, dayOfWeek,type);
+        System.out.println(startTimeByDoctorId);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", startTimeByDoctorId),
                 HttpStatus.OK

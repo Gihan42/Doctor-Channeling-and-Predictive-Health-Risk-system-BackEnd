@@ -59,7 +59,6 @@ public class MLProxyController {
 
     @PostMapping("/chat")
     public ResponseEntity<?> sendChatRequest(@RequestBody Map<String, Object> payload) {
-        System.out.println(payload);
         String pythonUrl = PYTHON_URL+"chat";
         try {
             HttpHeaders headers = new HttpHeaders();
