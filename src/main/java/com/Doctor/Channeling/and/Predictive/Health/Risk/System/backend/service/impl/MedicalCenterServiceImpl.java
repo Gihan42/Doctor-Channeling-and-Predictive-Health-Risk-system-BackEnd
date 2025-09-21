@@ -95,7 +95,15 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
                 map.setOpenTime(openTime);
                 map.setCloseTime(closeTime);
                 map.setChannelingRooms(medicalCenterDTO.getChannelingRooms());
-                return medicalCenterRepo.save(map);
+                MedicalCenter save = medicalCenterRepo.save(map);
+                if (roomList != null) {
+                    for (ChannelingRoomDTO room : roomList) {
+                        room.setMedicalCenterId(save.getId());
+                    }
+                    save.setChannelingRooms(roomList);
+                    save = medicalCenterRepo.save(save);
+                }
+                return save;
 
             } catch (ParseException e) {
                 throw new RuntimeException("Time format is invalid. Expected format: HH:mm:ss", e);
@@ -161,7 +169,15 @@ public class MedicalCenterServiceImpl implements MedicalCenterService {
                 }
                 existingCenter.setChannelingRooms(incomingRooms);
             }
-            return medicalCenterRepo.save(existingCenter);
+            MedicalCenter save = medicalCenterRepo.save(existingCenter);
+            if (incomingRooms != null) {
+                for (ChannelingRoomDTO room : incomingRooms) {
+                    room.setMedicalCenterId(save.getId());
+                }
+                save.setChannelingRooms(incomingRooms);
+                save = medicalCenterRepo.save(save);
+            }
+            return save;
         }catch (ParseException e) {
                 throw new RuntimeException("Time format is invalid. Expected format: HH:mm:ss", e);
             }

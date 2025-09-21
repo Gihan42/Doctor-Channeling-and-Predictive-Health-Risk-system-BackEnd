@@ -26,6 +26,7 @@ public class MedicalCenterController {
     @PostMapping(path = "/save")
     public ResponseEntity<StandardResponse> saveMedicalCenter(@RequestBody MedicalCenterDTO dto,
                                                        @RequestAttribute String type){
+        System.out.println(dto);
         MedicalCenter medicalCenter = medicalCenterService.createMedicalCenter(dto, type);
         return new ResponseEntity<>(
                 new StandardResponse(200,"success", medicalCenter),
