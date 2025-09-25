@@ -92,7 +92,6 @@ public class DoctorMedicalCenterRoomScheduleController {
                                                                      @RequestParam("dayOfWeek") String dayOfWeek,
                                                                      @RequestAttribute String type) {
         List<String> startTimeByDoctorId = doctorMedicalCenterRoomScheduleService.findStartTimeByDoctorId(doctorId, dayOfWeek,type);
-        System.out.println(startTimeByDoctorId);
         return new ResponseEntity<>(
                 new StandardResponse(200, "success", startTimeByDoctorId),
                 HttpStatus.OK

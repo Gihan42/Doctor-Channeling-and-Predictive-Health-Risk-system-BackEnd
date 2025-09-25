@@ -26,7 +26,6 @@ public class AppointmentController {
     @PostMapping("/create")
     public ResponseEntity<StandardResponse> createAppointment(@RequestBody AppointmentDTO dto,
                                                        @RequestAttribute String type){
-        System.out.println("Received appointment creation request: " + dto);
         Appointment appointment = appointmentService.createAppointment(dto, type);
         return new ResponseEntity<>(
                 new StandardResponse(200,"success", appointment),
